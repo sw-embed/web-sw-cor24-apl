@@ -1,3 +1,6 @@
+pub mod repl;
+
+use repl::ReplPanel;
 use yew::prelude::*;
 
 #[function_component(App)]
@@ -28,11 +31,9 @@ pub fn app() -> Html {
                 <h1>{"APL"}</h1>
                 <span>{"COR24 Environment"}</span>
             </header>
-            // Main content placeholder
+            // Main content
             <main id="main-content">
-                <div class="placeholder">
-                    <p>{"APL REPL coming soon"}</p>
-                </div>
+                <ReplPanel />
             </main>
             // Footer
             <footer>

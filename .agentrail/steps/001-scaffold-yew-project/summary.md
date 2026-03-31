@@ -1,0 +1,1 @@
+Scaffolded Yew/WASM project: Cargo.toml with all deps (yew 0.21, wasm-bindgen, web-sys, gloo, cor24-emulator path deps), index.html with Catppuccin Mocha theme, App function_component with header/footer/placeholder, build.rs metadata, serve.sh (port 9957), build-pages.sh, pages/.nojekyll. Trunk build, clippy, and fmt all pass clean.
