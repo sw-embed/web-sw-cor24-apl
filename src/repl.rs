@@ -20,6 +20,26 @@ pub enum Msg {
     Tick,
 }
 
+/// Command counter — when the parent bumps the counter, we act.
+#[derive(Properties, PartialEq)]
+pub struct ReplPanelProps {
+    /// Bumped by parent to trigger a reset.
+    #[prop_or_default]
+    pub reset_seq: u32,
+    /// Text to feed as a demo program (set when demo_seq changes).
+    #[prop_or_default]
+    pub feed_text: AttrValue,
+    /// Bumped by parent when feed_text should be consumed.
+    #[prop_or_default]
+    pub feed_seq: u32,
+    /// S2 switch state.
+    #[prop_or_default]
+    pub s2_on: bool,
+    /// Callback to report hardware state each tick: (led_on, last_tx, last_rx).
+    #[prop_or_default]
+    pub on_hw_state: Callback<(bool, Option<u8>, Option<u8>)>,
+}
+
 pub struct ReplPanel {
     emulator: EmulatorCore,
     output: Vec<String>,
@@ -33,6 +53,14 @@ pub struct ReplPanel {
     _blink_timer: Option<Timeout>,
     _tick_handle: Option<Timeout>,
     output_ref: NodeRef,
+    /// Track which reset_seq we last processed.
+    last_reset_seq: u32,
+    /// Track which feed_seq we last processed.
+    last_feed_seq: u32,
+    /// Last TX byte seen.
+    last_tx: Option<u8>,
+    /// Last RX byte seen.
+    last_rx: Option<u8>,
 }
 
 impl ReplPanel {
@@ -66,6 +94,8 @@ impl ReplPanel {
         self.output.clear();
         self.partial_line.clear();
         self.uart_rx_queue.clear();
+        self.last_tx = None;
+        self.last_rx = None;
     }
 
     /// Feed bytes from the RX queue into the emulator UART while it's ready.
@@ -77,6 +107,7 @@ impl ReplPanel {
             }
             if let Some(byte) = self.uart_rx_queue.pop_front() {
                 self.emulator.send_uart_byte(byte);
+                self.last_rx = Some(byte);
             }
         }
     }
@@ -90,6 +121,11 @@ impl ReplPanel {
         let uart = uart.to_string();
         self.emulator.clear_uart_output();
 
+        // Track last TX byte
+        if let Some(b) = uart.bytes().last() {
+            self.last_tx = Some(b);
+        }
+
         // Split on newlines, handling partial lines across ticks.
         for ch in uart.chars() {
             if ch == '\n' {
@@ -99,11 +135,25 @@ impl ReplPanel {
             }
         }
     }
+
+    /// Queue text to be sent to the interpreter line-by-line.
+    fn feed_program_text(&mut self, text: &str) {
+        for line in text.lines() {
+            let trimmed = line.trim();
+            if trimmed.is_empty() {
+                continue;
+            }
+            for b in trimmed.bytes() {
+                self.uart_rx_queue.push_back(b);
+            }
+            self.uart_rx_queue.push_back(b'\n');
+        }
+    }
 }
 
 impl Component for ReplPanel {
     type Message = Msg;
-    type Properties = ();
+    type Properties = ReplPanelProps;
 
     fn create(ctx: &Context<Self>) -> Self {
         ctx.link().send_message(Msg::Init);
@@ -122,7 +172,37 @@ impl Component for ReplPanel {
             _blink_timer: Some(blink_timer),
             _tick_handle: None,
             output_ref: NodeRef::default(),
+            last_reset_seq: 0,
+            last_feed_seq: 0,
+            last_tx: None,
+            last_rx: None,
         }
+    }
+
+    fn changed(&mut self, ctx: &Context<Self>, _old_props: &Self::Properties) -> bool {
+        let props = ctx.props();
+
+        // Handle reset command
+        if props.reset_seq != self.last_reset_seq {
+            self.last_reset_seq = props.reset_seq;
+            self.load_apl_binary();
+            if self._tick_handle.is_none() {
+                self._tick_handle = Some(Self::schedule_tick(ctx));
+            }
+        }
+
+        // Handle feed text command
+        if props.feed_seq != self.last_feed_seq {
+            self.last_feed_seq = props.feed_seq;
+            self.feed_program_text(&props.feed_text);
+        }
+
+        // S2 switch — write to emulator's switch register
+        // (The emulator reads switch state from a memory-mapped register)
+        let s2_val = if props.s2_on { 1u8 } else { 0u8 };
+        self.emulator.write_byte(0xFF0200, s2_val);
+
+        true
     }
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
@@ -149,6 +229,13 @@ impl Component for ReplPanel {
                 if self.running && !self.halted {
                     self._tick_handle = Some(Self::schedule_tick(ctx));
                 }
+
+                // Report hardware state to parent
+                let led_on = self.emulator.read_byte(0xFF0000) != 0;
+                ctx.props()
+                    .on_hw_state
+                    .emit((led_on, self.last_tx, self.last_rx));
+
                 true
             }
             Msg::Blink => {

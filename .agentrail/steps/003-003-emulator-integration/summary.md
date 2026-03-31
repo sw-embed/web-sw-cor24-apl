@@ -1,0 +1,1 @@
+Wired COR24 emulator into REPL panel. Build.rs pre-assembles APL interpreter from apl.s at build time. REPL now runs real APL interpreter via EmulatorCore with tick-based execution (50k inst/25ms), UART I/O bridging (RX queue with status register polling, TX output with partial line buffering), and modifier key passthrough for native copy/paste.

@@ -1,0 +1,8 @@
+number = 4
+slug = "004-control-bar-hardware-panel"
+status = "in-progress"
+description = "Add control bar (Reset button, demo dropdown, file upload) and floating hardw..."
+role = "production"
+context_files = []
+created_at = "2026-03-30T19:56:46"
+task_type = "feature"
