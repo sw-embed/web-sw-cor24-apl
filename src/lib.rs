@@ -2,10 +2,12 @@ pub mod config;
 pub mod control_bar;
 pub mod demos;
 pub mod hardware;
+pub mod prettify;
 pub mod repl;
 
 use control_bar::ControlBar;
 use hardware::HardwarePanel;
+use prettify::DisplayMode;
 use repl::ReplPanel;
 use yew::prelude::*;
 
@@ -15,6 +17,7 @@ pub enum Msg {
     UploadProgram(String),
     ToggleS2,
     HwState(bool, Option<u8>, Option<u8>),
+    SetDisplayMode(DisplayMode),
 }
 
 pub struct App {
@@ -25,6 +28,7 @@ pub struct App {
     led_on: bool,
     last_tx: Option<u8>,
     last_rx: Option<u8>,
+    display_mode: DisplayMode,
 }
 
 impl Component for App {
@@ -40,6 +44,7 @@ impl Component for App {
             led_on: false,
             last_tx: None,
             last_rx: None,
+            display_mode: DisplayMode::default(),
         }
     }
 
@@ -71,6 +76,14 @@ impl Component for App {
                 }
                 changed
             }
+            Msg::SetDisplayMode(mode) => {
+                if self.display_mode != mode {
+                    self.display_mode = mode;
+                    true
+                } else {
+                    false
+                }
+            }
         }
     }
 
@@ -82,6 +95,7 @@ impl Component for App {
         let on_upload = link.callback(Msg::UploadProgram);
         let on_s2_toggle = link.callback(|()| Msg::ToggleS2);
         let on_hw_state = link.callback(|(led, tx, rx)| Msg::HwState(led, tx, rx));
+        let on_display_mode = link.callback(Msg::SetDisplayMode);
 
         html! {
             <>
@@ -110,7 +124,8 @@ impl Component for App {
                     <span>{"COR24 Environment"}</span>
                 </header>
                 // Control bar
-                <ControlBar {on_reset} {on_demo} {on_upload} />
+                <ControlBar {on_reset} {on_demo} {on_upload}
+                    display_mode={self.display_mode} {on_display_mode} />
                 // Main content
                 <main id="main-content">
                     <ReplPanel
@@ -119,6 +134,7 @@ impl Component for App {
                         feed_seq={self.feed_seq}
                         s2_on={self.s2_on}
                         on_hw_state={on_hw_state}
+                        display_mode={self.display_mode}
                     />
                     <HardwarePanel
                         led_on={self.led_on}

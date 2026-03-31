@@ -1,0 +1,1 @@
+Fixed two hardware I/O bugs (LED active-low read, switch unmapped address write), replaced JS cursor blink with CSS animation, added responsive design breakpoints (600px/400px), enabled pre-wrap and smooth scrolling, added Hardware I/O demo with qled/qsw, built GitHub Pages release to pages/

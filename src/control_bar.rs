@@ -1,6 +1,7 @@
-//! Control bar — Reset, Demo dropdown, File upload.
+//! Control bar — Reset, Demo dropdown, File upload, Display mode.
 
 use crate::demos::DEMOS;
+use crate::prettify::DisplayMode;
 use gloo::file::File;
 use gloo::file::callbacks::FileReader;
 use web_sys::HtmlInputElement;
@@ -11,6 +12,7 @@ pub enum Msg {
     FileChanged(File),
     FileLoaded(String),
     Reset,
+    SetDisplayMode(DisplayMode),
 }
 
 #[derive(Properties, PartialEq)]
@@ -18,6 +20,8 @@ pub struct ControlBarProps {
     pub on_reset: Callback<()>,
     pub on_demo: Callback<String>,
     pub on_upload: Callback<String>,
+    pub display_mode: DisplayMode,
+    pub on_display_mode: Callback<DisplayMode>,
 }
 
 pub struct ControlBar {
@@ -65,6 +69,10 @@ impl Component for ControlBar {
                 ctx.props().on_upload.emit(text);
                 false
             }
+            Msg::SetDisplayMode(mode) => {
+                ctx.props().on_display_mode.emit(mode);
+                false
+            }
         }
     }
 
@@ -84,6 +92,19 @@ impl Component for ControlBar {
             let file = input.files().and_then(|fl| fl.get(0)).unwrap();
             Msg::FileChanged(File::from(file))
         });
+
+        let current_mode = ctx.props().display_mode;
+        let on_mode_repr = link.callback(|_| Msg::SetDisplayMode(DisplayMode::Repr));
+        let on_mode_glyph = link.callback(|_| Msg::SetDisplayMode(DisplayMode::Glyph));
+        let on_mode_literate = link.callback(|_| Msg::SetDisplayMode(DisplayMode::Literate));
+
+        let mode_class = |mode: DisplayMode| {
+            if mode == current_mode {
+                "btn btn-mode btn-mode-active"
+            } else {
+                "btn btn-mode"
+            }
+        };
 
         html! {
             <div class="control-bar">
@@ -108,6 +129,23 @@ impl Component for ControlBar {
                            onchange={on_file_change}
                            style="display:none" />
                 </label>
+                <span class="mode-group">
+                    <button onclick={on_mode_repr}
+                            class={mode_class(DisplayMode::Repr)}
+                            title="Show raw ASCII keywords">
+                        {"abc"}
+                    </button>
+                    <button onclick={on_mode_glyph}
+                            class={mode_class(DisplayMode::Glyph)}
+                            title="Show APL glyphs">
+                        {"\u{2374}"}
+                    </button>
+                    <button onclick={on_mode_literate}
+                            class={mode_class(DisplayMode::Literate)}
+                            title="Show literate names">
+                        {"A\u{2192}Z"}
+                    </button>
+                </span>
             </div>
         }
     }

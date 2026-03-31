@@ -116,6 +116,9 @@ function __wbg_get_imports() {
             const ret = arg0.files;
             return isLikeNone(ret) ? 0 : addToExternrefTable0(ret);
         },
+        __wbg_focus_b56ac9e2d8e6d278: function() { return handleError(function (arg0) {
+            arg0.focus();
+        }, arguments); },
         __wbg_from_7bbac5c419024362: function(arg0) {
             const ret = Array.from(arg0);
             return ret;

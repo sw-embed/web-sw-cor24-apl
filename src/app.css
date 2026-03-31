@@ -198,6 +198,43 @@
     color: var(--text);
 }
 
+/* Display mode toggle group */
+.mode-group {
+    display: inline-flex;
+    gap: 0;
+    margin-left: auto;
+}
+
+.btn-mode {
+    border-radius: 0;
+    border-right-width: 0;
+    padding: 4px 8px;
+    font-size: 12px;
+    min-width: 32px;
+    text-align: center;
+}
+
+.btn-mode:first-child {
+    border-radius: 4px 0 0 4px;
+}
+
+.btn-mode:last-child {
+    border-radius: 0 4px 4px 0;
+    border-right-width: 1px;
+}
+
+.btn-mode-active {
+    background: var(--mauve);
+    color: var(--base);
+    border-color: var(--mauve);
+}
+
+/* APL keyword highlighting */
+.apl-keyword {
+    color: var(--mauve);
+    font-weight: 600;
+}
+
 /* Cursor blink animation */
 @keyframes cursor-blink {
     0%, 49% { opacity: 1; }

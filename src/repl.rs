@@ -1,4 +1,5 @@
 use crate::config;
+use crate::prettify::{DisplayMode, Segment, prettify_line};
 use cor24_emulator::{EmulatorCore, StopReason};
 use gloo::timers::callback::Timeout;
 use std::collections::VecDeque;
@@ -37,6 +38,9 @@ pub struct ReplPanelProps {
     /// Callback to report hardware state each tick: (led_on, last_tx, last_rx).
     #[prop_or_default]
     pub on_hw_state: Callback<(bool, Option<u8>, Option<u8>)>,
+    /// Display mode for APL prettification.
+    #[prop_or_default]
+    pub display_mode: DisplayMode,
 }
 
 pub struct ReplPanel {
@@ -127,6 +131,34 @@ impl ReplPanel {
             } else if ch != '\r' {
                 self.partial_line.push(ch);
             }
+        }
+    }
+
+    /// Render a single output line, applying prettification to echoed input lines.
+    fn render_line(line: &str, mode: DisplayMode) -> Html {
+        // Lines starting with the 6-space prompt are echoed user input — prettify those.
+        if let Some(content) = line.strip_prefix(PROMPT) {
+            let segments = prettify_line(content, mode);
+            html! {
+                <div class="repl-line">
+                    <span class="repl-prompt">{ PROMPT }</span>
+                    { Self::render_segments(&segments) }
+                </div>
+            }
+        } else {
+            html! { <div class="repl-line">{ line }</div> }
+        }
+    }
+
+    /// Render prettified segments with keyword highlighting.
+    fn render_segments(segments: &[Segment]) -> Html {
+        html! {
+            { for segments.iter().map(|seg| match seg {
+                Segment::Plain(text) => html! { <>{ text }</> },
+                Segment::Keyword(text) => html! {
+                    <span class="apl-keyword">{ text }</span>
+                },
+            })}
         }
     }
 
@@ -284,20 +316,21 @@ impl Component for ReplPanel {
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         let onkeydown = ctx.link().callback(Msg::KeyDown);
+        let mode = ctx.props().display_mode;
 
         html! {
             <div class="repl-panel" tabindex="0" {onkeydown} ref={self.panel_ref.clone()}>
                 <div class="repl-output" ref={self.output_ref.clone()}>
-                    { for self.output.iter().map(|line| html! {
-                        <div class="repl-line">{ line }</div>
-                    })}
+                    { for self.output.iter().map(|line| Self::render_line(line, mode)) }
                     // Show partial line if the emulator is mid-output
                     if !self.partial_line.is_empty() {
                         <div class="repl-line">{ &self.partial_line }</div>
                     }
                     <div class="repl-input-line">
                         <span class="repl-prompt">{ PROMPT }</span>
-                        <span class="repl-input-text">{ &self.input }</span>
+                        <span class="repl-input-text">
+                            { Self::render_segments(&prettify_line(&self.input, mode)) }
+                        </span>
                         <span class="repl-cursor">{"\u{2588}"}</span>
                     </div>
                 </div>
