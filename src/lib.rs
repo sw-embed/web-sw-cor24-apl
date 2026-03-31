@@ -1,3 +1,4 @@
+pub mod config;
 pub mod repl;
 
 use repl::ReplPanel;

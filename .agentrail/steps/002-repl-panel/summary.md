@@ -1,0 +1,1 @@
+Created ReplPanel component (src/repl.rs) with scrolling output, keyboard capture (Enter/Backspace/printable chars), 6-space indent prompt, echo-back behavior, and blinking block cursor. Updated lib.rs to wire the component, added REPL panel CSS with Catppuccin Mocha theming. Trunk build compiles clean, clippy and fmt pass.
