@@ -50,6 +50,8 @@ pub struct ReplPanel {
     partial_line: String,
     _tick_handle: Option<Timeout>,
     output_ref: NodeRef,
+    panel_ref: NodeRef,
+    needs_focus: bool,
     /// Track which reset_seq we last processed.
     last_reset_seq: u32,
     /// Track which feed_seq we last processed.
@@ -161,6 +163,8 @@ impl Component for ReplPanel {
             partial_line: String::new(),
             _tick_handle: None,
             output_ref: NodeRef::default(),
+            panel_ref: NodeRef::default(),
+            needs_focus: false,
             last_reset_seq: 0,
             last_feed_seq: 0,
             last_tx: None,
@@ -175,6 +179,7 @@ impl Component for ReplPanel {
         if props.reset_seq != self.last_reset_seq {
             self.last_reset_seq = props.reset_seq;
             self.load_apl_binary();
+            self.needs_focus = true;
             if self._tick_handle.is_none() {
                 self._tick_handle = Some(Self::schedule_tick(ctx));
             }
@@ -184,6 +189,7 @@ impl Component for ReplPanel {
         if props.feed_seq != self.last_feed_seq {
             self.last_feed_seq = props.feed_seq;
             self.feed_program_text(&props.feed_text);
+            self.needs_focus = true;
         }
 
         // S2 switch — use emulator API (active-low hardware)
@@ -266,15 +272,21 @@ impl Component for ReplPanel {
         }
     }
 
-    fn rendered(&mut self, _ctx: &Context<Self>, _first_render: bool) {
+    fn rendered(&mut self, _ctx: &Context<Self>, first_render: bool) {
         self.scroll_to_bottom();
+        if (first_render || self.needs_focus)
+            && let Some(el) = self.panel_ref.cast::<HtmlDivElement>()
+        {
+            let _ = el.focus();
+            self.needs_focus = false;
+        }
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         let onkeydown = ctx.link().callback(Msg::KeyDown);
 
         html! {
-            <div class="repl-panel" tabindex="0" {onkeydown}>
+            <div class="repl-panel" tabindex="0" {onkeydown} ref={self.panel_ref.clone()}>
                 <div class="repl-output" ref={self.output_ref.clone()}>
                     { for self.output.iter().map(|line| html! {
                         <div class="repl-line">{ line }</div>

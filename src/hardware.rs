@@ -17,6 +17,7 @@ pub fn hardware_panel(props: &HardwarePanelProps) -> Html {
         let cb = props.on_s2_toggle.clone();
         Callback::from(move |_: MouseEvent| cb.emit(()))
     };
+    let prevent_focus = Callback::from(|e: MouseEvent| e.prevent_default());
 
     let led_class = if props.led_on {
         "hw-led hw-led-on"
@@ -44,7 +45,7 @@ pub fn hardware_panel(props: &HardwarePanelProps) -> Html {
             <div class="hw-title">{"Hardware"}</div>
             <div class="hw-row">
                 <span class="hw-label">{"S2"}</span>
-                <span class={switch_class} onclick={on_s2}>
+                <span class={switch_class} onclick={on_s2} onmousedown={prevent_focus}>
                     { if props.s2_on { "ON" } else { "OFF" } }
                 </span>
             </div>
