@@ -15,7 +15,6 @@ const TICK_MS: u32 = 25;
 
 pub enum Msg {
     KeyDown(KeyboardEvent),
-    Blink,
     Init,
     Tick,
 }
@@ -44,13 +43,11 @@ pub struct ReplPanel {
     emulator: EmulatorCore,
     output: Vec<String>,
     input: String,
-    cursor_visible: bool,
     running: bool,
     halted: bool,
     uart_rx_queue: VecDeque<u8>,
     /// Partial line buffer for UART output that hasn't ended with '\n' yet.
     partial_line: String,
-    _blink_timer: Option<Timeout>,
     _tick_handle: Option<Timeout>,
     output_ref: NodeRef,
     /// Track which reset_seq we last processed.
@@ -64,11 +61,6 @@ pub struct ReplPanel {
 }
 
 impl ReplPanel {
-    fn schedule_blink(ctx: &Context<Self>) -> Timeout {
-        let link = ctx.link().clone();
-        Timeout::new(530, move || link.send_message(Msg::Blink))
-    }
-
     fn schedule_tick(ctx: &Context<Self>) -> Timeout {
         let link = ctx.link().clone();
         Timeout::new(TICK_MS, move || link.send_message(Msg::Tick))
@@ -157,19 +149,16 @@ impl Component for ReplPanel {
 
     fn create(ctx: &Context<Self>) -> Self {
         ctx.link().send_message(Msg::Init);
-        let blink_timer = Self::schedule_blink(ctx);
         let mut emulator = EmulatorCore::new();
         emulator.set_uart_tx_busy_cycles(0);
         Self {
             emulator,
             output: vec!["APL / COR24 Environment".to_string(), String::new()],
             input: String::new(),
-            cursor_visible: true,
             running: false,
             halted: false,
             uart_rx_queue: VecDeque::new(),
             partial_line: String::new(),
-            _blink_timer: Some(blink_timer),
             _tick_handle: None,
             output_ref: NodeRef::default(),
             last_reset_seq: 0,
@@ -197,10 +186,8 @@ impl Component for ReplPanel {
             self.feed_program_text(&props.feed_text);
         }
 
-        // S2 switch — write to emulator's switch register
-        // (The emulator reads switch state from a memory-mapped register)
-        let s2_val = if props.s2_on { 1u8 } else { 0u8 };
-        self.emulator.write_byte(0xFF0200, s2_val);
+        // S2 switch — use emulator API (active-low hardware)
+        self.emulator.set_button_pressed(props.s2_on);
 
         true
     }
@@ -230,17 +217,12 @@ impl Component for ReplPanel {
                     self._tick_handle = Some(Self::schedule_tick(ctx));
                 }
 
-                // Report hardware state to parent
-                let led_on = self.emulator.read_byte(0xFF0000) != 0;
+                // Report hardware state to parent (LED is active-low)
+                let led_on = self.emulator.is_led_on();
                 ctx.props()
                     .on_hw_state
                     .emit((led_on, self.last_tx, self.last_rx));
 
-                true
-            }
-            Msg::Blink => {
-                self.cursor_visible = !self.cursor_visible;
-                self._blink_timer = Some(Self::schedule_blink(ctx));
                 true
             }
             Msg::KeyDown(e) => {
@@ -290,11 +272,6 @@ impl Component for ReplPanel {
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         let onkeydown = ctx.link().callback(Msg::KeyDown);
-        let cursor_class = if self.cursor_visible {
-            "repl-cursor"
-        } else {
-            "repl-cursor repl-cursor-hidden"
-        };
 
         html! {
             <div class="repl-panel" tabindex="0" {onkeydown}>
@@ -309,7 +286,7 @@ impl Component for ReplPanel {
                     <div class="repl-input-line">
                         <span class="repl-prompt">{ PROMPT }</span>
                         <span class="repl-input-text">{ &self.input }</span>
-                        <span class={cursor_class}>{"\u{2588}"}</span>
+                        <span class="repl-cursor">{"\u{2588}"}</span>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,1 @@
+Added control bar (Reset, Demo dropdown with 6 APL programs, File upload), floating hardware panel (S2 switch, D2 LED, UART TX/RX), and demo registry. Refactored App to full Component for state management. ReplPanel accepts Properties for reset/feed commands via sequence-counter pattern and reports hardware state via callback.

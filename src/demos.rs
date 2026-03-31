@@ -77,4 +77,18 @@ rho 2 3 rho iota 6
 (2 3 rho iota 6) * 2
 ",
     },
+    Demo {
+        name: "Hardware I/O",
+        description: "LED and switch via quad-variables",
+        source: "\
+qled
+qled <- 1
+qled
+qled <- 0
+qled
+qsw
+qled <- qsw
+qled
+",
+    },
 ];
