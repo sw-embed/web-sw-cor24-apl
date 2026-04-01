@@ -24,39 +24,55 @@ pub enum Segment {
 struct KeywordEntry {
     ascii: &'static str,
     glyph: &'static str,
-    literate: &'static str,
+    /// Literate name when used monadically (prefix): `rho X` → "shape-of"
+    literate_monadic: &'static str,
+    /// Literate name when used dyadically (infix): `A rho B` → "reshape".
+    /// `None` means the keyword is always monadic.
+    literate_dyadic: Option<&'static str>,
 }
 
 const KEYWORDS: &[KeywordEntry] = &[
     KeywordEntry {
         ascii: "rho",
         glyph: "\u{2374}", // ⍴
-        literate: "shape",
+        literate_monadic: "shape-of",
+        literate_dyadic: Some("reshape"),
     },
     KeywordEntry {
         ascii: "iota",
         glyph: "\u{2373}", // ⍳
-        literate: "index-gen",
+        literate_monadic: "index-gen",
+        literate_dyadic: None,
     },
     KeywordEntry {
         ascii: "take",
         glyph: "\u{2191}", // ↑
-        literate: "take",
+        literate_monadic: "take",
+        literate_dyadic: None,
     },
     KeywordEntry {
         ascii: "drop",
         glyph: "\u{2193}", // ↓
-        literate: "drop",
+        literate_monadic: "drop",
+        literate_dyadic: None,
     },
     KeywordEntry {
         ascii: "qled",
         glyph: "\u{2395}LED", // ⎕LED
-        literate: "LED",
+        literate_monadic: "LED",
+        literate_dyadic: None,
     },
     KeywordEntry {
         ascii: "qsw",
         glyph: "\u{2395}SW", // ⎕SW
-        literate: "switch",
+        literate_monadic: "switch",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "qsvo",
+        glyph: "\u{2395}SVO", // ⎕SVO
+        literate_monadic: "share",
+        literate_dyadic: None,
     },
 ];
 
@@ -89,11 +105,20 @@ pub fn prettify_line(line: &str, mode: DisplayMode) -> Vec<Segment> {
                     segments.push(Segment::Plain(line[plain_start..i].to_string()));
                 }
                 let replacement = match mode {
-                    DisplayMode::Glyph => entry.glyph,
-                    DisplayMode::Literate => entry.literate,
+                    DisplayMode::Glyph => entry.glyph.to_string(),
+                    DisplayMode::Literate => {
+                        // Dyadic if there's a non-whitespace token before the keyword.
+                        let is_dyadic = entry.literate_dyadic.is_some()
+                            && line[..i].contains(|c: char| !c.is_ascii_whitespace());
+                        if is_dyadic {
+                            entry.literate_dyadic.unwrap().to_string()
+                        } else {
+                            entry.literate_monadic.to_string()
+                        }
+                    }
                     DisplayMode::Repr => unreachable!(),
                 };
-                segments.push(Segment::Keyword(replacement.to_string()));
+                segments.push(Segment::Keyword(replacement));
                 i = end;
                 plain_start = i;
                 continue;

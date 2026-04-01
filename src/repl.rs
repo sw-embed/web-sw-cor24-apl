@@ -212,9 +212,9 @@ impl Component for ReplPanel {
             self.last_reset_seq = props.reset_seq;
             self.load_apl_binary();
             self.needs_focus = true;
-            if self._tick_handle.is_none() {
-                self._tick_handle = Some(Self::schedule_tick(ctx));
-            }
+            // Always schedule a fresh tick — the old Timeout may have
+            // already fired (e.g. after )OFF halt) but still be Some.
+            self._tick_handle = Some(Self::schedule_tick(ctx));
         }
 
         // Handle feed text command
@@ -249,6 +249,13 @@ impl Component for ReplPanel {
                 if matches!(result.reason, StopReason::Halted) {
                     self.halted = true;
                     self.running = false;
+                    // Flush any remaining partial line
+                    if !self.partial_line.is_empty() {
+                        self.output.push(std::mem::take(&mut self.partial_line));
+                    }
+                    self.output.push(String::new());
+                    self.output
+                        .push("[Halted — press Reset to restart]".to_string());
                 }
 
                 if self.running && !self.halted {
@@ -266,6 +273,10 @@ impl Component for ReplPanel {
             Msg::KeyDown(e) => {
                 // Let modifier combos (Cmd-C, Ctrl-V, etc.) pass through to browser
                 if e.meta_key() || e.ctrl_key() || e.alt_key() {
+                    return false;
+                }
+                // Ignore input when the emulator has halted (e.g. after )OFF)
+                if self.halted {
                     return false;
                 }
                 let key = e.key();

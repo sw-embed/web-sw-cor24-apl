@@ -92,14 +92,16 @@ in web-sw-cor24-pcode.
 - Final theme tuning
 - Build pages/ for initial GitHub Pages deployment
 
-## Phase 6: Display Modes (future, optional)
+## Phase 6: Display Modes (complete)
 
 **Step: feature (APL glyph prettification)**
 
-- Add display mode toggle (representation / shorthand / literate)
-- Shorthand mode: replace rho with ⍴, iota with ⍳, etc. in output
-- Literate mode: context-sensitive display (shape-of vs reshape)
-- Operator metadata table for all three renderings
+- Display mode toggle (representation / shorthand / literate)
+- Shorthand mode: replace rho with APL glyph, iota with APL glyph, etc.
+- Literate mode: context-sensitive display (shape-of vs reshape,
+  monadic vs dyadic detection)
+- Keyword entries with glyph, literate_monadic, and literate_dyadic forms
+- Keyword highlighting with accent color in non-repr modes
 
 ## Dependencies
 
@@ -119,7 +121,7 @@ Phase 4 (hardware panel + demos)
 Phase 5 (polish)
   |
   v
-Phase 6 (display modes) --- future
+Phase 6 (display modes) --- complete
 ```
 
 ## Build-time Dependency Chain

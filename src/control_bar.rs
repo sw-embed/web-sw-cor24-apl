@@ -133,17 +133,17 @@ impl Component for ControlBar {
                     <button onclick={on_mode_repr}
                             class={mode_class(DisplayMode::Repr)}
                             title="Show raw ASCII keywords">
-                        {"abc"}
+                        {"latin"}
                     </button>
                     <button onclick={on_mode_glyph}
                             class={mode_class(DisplayMode::Glyph)}
                             title="Show APL glyphs">
-                        {"\u{2374}"}
+                        {"greek"}
                     </button>
                     <button onclick={on_mode_literate}
                             class={mode_class(DisplayMode::Literate)}
                             title="Show literate names">
-                        {"A\u{2192}Z"}
+                        {"keywords"}
                     </button>
                 </span>
             </div>

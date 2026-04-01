@@ -119,17 +119,23 @@ The browser displays APL output with optional glyph substitution.
 Source is always stored/transmitted as canonical ASCII.
 
 ```
-Canonical (stored/transmitted):  rho
-Shorthand (display option):     ⍴
-Literate (future, context-aware): shape-of / reshape
+Representation (stored/transmitted):  rho
+Shorthand (display option):          U+2374 (APL rho glyph)
+Literate (context-aware):            shape-of / reshape
 ```
+
+Three display modes, toggled via buttons in the control bar:
+
+- **Repr** -- canonical ASCII keywords (`rho`, `iota`, `take`, `drop`)
+- **Glyph** -- APL symbols (rho->U+2374, iota->U+2373, take->U+2191,
+  drop->U+2193, qled->U+2395 LED, qsw->U+2395 SW, qsvo->U+2395 SVO)
+- **Literate** -- context-sensitive English; monadic `rho` -> "shape-of",
+  dyadic `A rho B` -> "reshape" (detects dyadic usage from preceding tokens)
 
 The prettification is a display-only transformation in the ReplPanel
 component. The emulator and interpreter never see Unicode -- only
-ASCII flows through UART.
-
-Initial implementation: one display mode (canonical ASCII).
-Future: toggle between representation, shorthand, and literate modes.
+ASCII flows through UART. Keywords are highlighted with accent color
+in glyph and literate modes.
 
 ## Emulator Integration
 

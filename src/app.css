@@ -203,6 +203,7 @@
     display: inline-flex;
     gap: 0;
     margin-left: auto;
+    margin-right: 80px;
 }
 
 .btn-mode {

@@ -49,11 +49,14 @@ single REPL panel.
 - Resets emulator state
 - Returns to empty workspace with 6-space indent prompt
 
-### F-6: APL Glyph Display (v1: single mode)
+### F-6: APL Glyph Display (three modes)
 
-- Initially: canonical ASCII display (rho, iota, etc.)
-- Future: toggle between representation, shorthand (glyphs),
-  and literate (context-sensitive English) modes
+- Toggle between three display modes:
+  - **Representation**: canonical ASCII (`rho`, `iota`, etc.)
+  - **Shorthand**: APL glyphs (rho, iota, take, drop, quad-LED, quad-SW)
+  - **Literate**: context-sensitive English names (`shape-of` / `reshape`,
+    `index-gen`, `take`, `drop`); monadic vs dyadic forms detected
+    from context
 
 ### F-7: Emulator Execution
 
@@ -103,7 +106,7 @@ single REPL panel.
 - Multi-panel editor / IDE
 - Syntax highlighting in the input area
 - APL glyph keyboard input (type Unicode directly)
-- Shorthand and literate display modes
+- APL glyph keyboard input (type Unicode directly)
 - Variable inspector / workspace browser
 - Breakpoint debugging
 - Save/export workspace

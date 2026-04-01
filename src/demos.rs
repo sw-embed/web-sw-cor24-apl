@@ -24,6 +24,19 @@ qled
 ",
     },
     Demo {
+        name: "Shared Variables",
+        description: "MMIO via qsvo 242 (AP 242 shared variable coupling)",
+        source: "\
+MMIO qsvo 242
+MMIO[0]
+MMIO[0] <- 1
+MMIO[0]
+MMIO[257]
+MMIO[0] <- 0
+MMIO[0]
+",
+    },
+    Demo {
         name: "Iota & Reduce",
         description: "Index generation and reduction",
         source: "\
