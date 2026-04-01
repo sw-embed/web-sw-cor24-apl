@@ -3,7 +3,7 @@ use crate::prettify::{DisplayMode, Segment, prettify_line};
 use cor24_emulator::{EmulatorCore, StopReason};
 use gloo::timers::callback::Timeout;
 use std::collections::VecDeque;
-use web_sys::HtmlDivElement;
+use web_sys::{HtmlDivElement, HtmlElement};
 use yew::prelude::*;
 
 const PROMPT: &str = "      ";
@@ -18,6 +18,8 @@ pub enum Msg {
     KeyDown(KeyboardEvent),
     Init,
     Tick,
+    Scroll,
+    ScrollToBottom,
 }
 
 /// Command counter — when the parent bumps the counter, we act.
@@ -70,6 +72,8 @@ pub struct ReplPanel {
     history_index: Option<usize>,
     /// Saved in-progress input when browsing history.
     history_saved_input: String,
+    /// True when the user has scrolled away from the bottom.
+    user_scrolled_up: bool,
 }
 
 impl ReplPanel {
@@ -79,9 +83,18 @@ impl ReplPanel {
     }
 
     fn scroll_to_bottom(&self) {
+        if self.user_scrolled_up {
+            return;
+        }
         if let Some(el) = self.output_ref.cast::<HtmlDivElement>() {
             el.set_scroll_top(el.scroll_height());
         }
+    }
+
+    /// Check whether the output container is scrolled near the bottom.
+    fn is_near_bottom(el: &HtmlElement) -> bool {
+        let threshold = 20;
+        el.scroll_top() + el.client_height() >= el.scroll_height() - threshold
     }
 
     /// Load the pre-assembled APL binary and start the emulator.
@@ -210,6 +223,7 @@ impl Component for ReplPanel {
             history: Vec::new(),
             history_index: None,
             history_saved_input: String::new(),
+            user_scrolled_up: false,
         }
     }
 
@@ -277,6 +291,23 @@ impl Component for ReplPanel {
                     .on_hw_state
                     .emit((led_on, self.last_tx, self.last_rx));
 
+                true
+            }
+            Msg::Scroll => {
+                if let Some(el) = self.output_ref.cast::<HtmlElement>() {
+                    let was = self.user_scrolled_up;
+                    self.user_scrolled_up = !Self::is_near_bottom(&el);
+                    // Only re-render if the flag changed (shows/hides the indicator)
+                    was != self.user_scrolled_up
+                } else {
+                    false
+                }
+            }
+            Msg::ScrollToBottom => {
+                self.user_scrolled_up = false;
+                if let Some(el) = self.output_ref.cast::<HtmlDivElement>() {
+                    el.set_scroll_top(el.scroll_height());
+                }
                 true
             }
             Msg::KeyDown(e) => {
@@ -373,11 +404,13 @@ impl Component for ReplPanel {
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         let onkeydown = ctx.link().callback(Msg::KeyDown);
+        let onscroll = ctx.link().callback(|_: Event| Msg::Scroll);
+        let on_scroll_btn = ctx.link().callback(|_: MouseEvent| Msg::ScrollToBottom);
         let mode = ctx.props().display_mode;
 
         html! {
             <div class="repl-panel" tabindex="0" {onkeydown} ref={self.panel_ref.clone()}>
-                <div class="repl-output" ref={self.output_ref.clone()}>
+                <div class="repl-output" ref={self.output_ref.clone()} {onscroll}>
                     { for self.output.iter().map(|line| Self::render_line(line, mode)) }
                     // Show partial line if the emulator is mid-output
                     if !self.partial_line.is_empty() {
@@ -391,6 +424,12 @@ impl Component for ReplPanel {
                         <span class="repl-cursor">{"\u{2588}"}</span>
                     </div>
                 </div>
+                if self.user_scrolled_up {
+                    <button class="scroll-to-bottom" onclick={on_scroll_btn}
+                        title="Scroll to bottom">
+                        {"↓ Bottom"}
+                    </button>
+                }
             </div>
         }
     }

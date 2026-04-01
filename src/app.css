@@ -64,6 +64,7 @@
     flex-direction: column;
     min-height: 0;
     outline: none;
+    position: relative;
 }
 
 .repl-panel:focus {
@@ -103,6 +104,27 @@
 .repl-cursor {
     color: var(--text);
     animation: cursor-blink 1.06s step-end infinite;
+}
+
+/* Scroll-to-bottom indicator */
+.scroll-to-bottom {
+    position: absolute;
+    bottom: 12px;
+    left: 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 4px 10px;
+    border: 1px solid var(--surface2);
+    border-radius: 4px;
+    cursor: pointer;
+    background: rgba(24, 24, 37, 0.9);
+    color: var(--blue);
+    z-index: 10;
+}
+
+.scroll-to-bottom:hover {
+    background: var(--surface0);
+    color: var(--text);
 }
 
 /* Hardware panel — floating bottom-right */
