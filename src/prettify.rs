@@ -72,7 +72,7 @@ pub const KEYWORDS: &[KeywordEntry] = &[
         ascii: "qsvo",
         glyph: "\u{2395}SVO", // ⎕SVO
         literate_monadic: "share",
-        literate_dyadic: None,
+        literate_dyadic: Some("share"),
     },
     KeywordEntry {
         ascii: "rev",

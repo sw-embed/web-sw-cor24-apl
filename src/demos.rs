@@ -18,7 +18,7 @@ pub const DEMOS: &[Demo] = &[
 not 0
 not 1
 1 2 3 and 3 2 1
-MMIO qsvo 242
+'MMIO' qsvo 242
 MMIO[257] and 2
 ",
     },
@@ -129,7 +129,7 @@ _3 + 10
         name: "Shared Variables",
         description: "MMIO via qsvo 242 (AP 242 shared variable coupling)",
         source: "\
-MMIO qsvo 242
+'MMIO' qsvo 242
 MMIO[0]
 MMIO[0] <- 1
 MMIO[0]
