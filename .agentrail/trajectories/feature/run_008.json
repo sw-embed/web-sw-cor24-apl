@@ -1,0 +1,11 @@
+{
+  "task_type": "feature",
+  "state": {
+    "number": 15,
+    "step": "015-sync-cli-demos"
+  },
+  "action": "Read CLI samples, Edit demos.rs, cargo clippy/fmt/test, build-pages.sh, Playwright navigate/select/get_visible_text",
+  "result": "success",
+  "reward": 1,
+  "timestamp": "2026-04-01T10:19:56"
+}

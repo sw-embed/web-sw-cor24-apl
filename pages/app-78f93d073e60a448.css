@@ -412,6 +412,90 @@
     font-size: 12px;
 }
 
+/* Help tabs */
+.help-tabs {
+    display: flex;
+    gap: 0;
+}
+
+.help-tab {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--overlay1);
+    padding: 4px 14px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    user-select: none;
+}
+
+.help-tab:hover {
+    color: var(--text);
+}
+
+.help-tab-active {
+    color: var(--mauve);
+    border-bottom-color: var(--mauve);
+}
+
+/* Tutorial tab */
+.tutorial {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.tut-section {
+    margin-bottom: 16px;
+}
+
+.tut-section:last-child {
+    margin-bottom: 0;
+}
+
+.tut-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--mauve);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0 0 4px 0;
+}
+
+.tut-desc {
+    font-size: 12px;
+    color: var(--subtext0);
+    margin: 0 0 6px 0;
+    line-height: 1.5;
+}
+
+.tut-examples {
+    background: var(--base);
+    border: 1px solid var(--surface1);
+    border-radius: 4px;
+    padding: 6px 10px;
+}
+
+.tut-example {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 1.5em;
+}
+
+.tut-input {
+    color: var(--green);
+    white-space: pre;
+}
+
+.tut-output {
+    color: var(--subtext1);
+    text-align: right;
+    white-space: pre;
+    flex-shrink: 0;
+}
+
 /* Cursor blink animation */
 @keyframes cursor-blink {
     0%, 49% { opacity: 1; }

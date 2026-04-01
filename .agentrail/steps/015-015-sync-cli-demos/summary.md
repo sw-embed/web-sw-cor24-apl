@@ -1,0 +1,1 @@
+Added 5 new demos synced from CLI samples: Comparison Operators, Edge Cases, Matrix Take & Drop, Multiline Programs, System Commands. Translated GNU APL Unicode to COR24 ASCII surface syntax. Maintained alphabetical order (19 demos total). Built pages, verified dropdown and demo execution via Playwright.

@@ -1,6 +1,6 @@
 number = 16
 slug = "016-tutorial-tab"
-status = "pending"
+status = "in-progress"
 description = """
 Phase 16: Add a Tutorial tab to the help dialog (launched by the ? button).
 
