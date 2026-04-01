@@ -151,6 +151,9 @@ impl Component for ControlBar {
                         class="btn btn-help" title="APL Quick Reference">
                     {"?"}
                 </button>
+                <span class="io-indicator" title="Index origin: iota 5 \u{2192} 0 1 2 3 4">
+                    {"\u{2395}IO\u{2190}0"}
+                </span>
                 <span class="corner-spacer"></span>
             </div>
         }

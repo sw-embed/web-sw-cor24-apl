@@ -1,0 +1,1 @@
+Deployed phases 7-11 to GitHub Pages. Ran clippy (clean), fmt (clean), tests (pass). Rebuilt pages/ with release build. Fixed GitHub corner SVG intercepting pointer events on help button via pointer-events CSS. Verified via Playwright: app loads, Bitwise Operations demo runs correctly, greek prettification mode works (and→∧, or→∨, not→~, rho→ρ), help overlay opens.

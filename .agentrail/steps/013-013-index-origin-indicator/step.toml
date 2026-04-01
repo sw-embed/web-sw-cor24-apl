@@ -1,6 +1,6 @@
 number = 13
 slug = "013-index-origin-indicator"
-status = "pending"
+status = "in-progress"
 description = """
 Phase 13: Show index origin (⎕IO) indicator in the UI.
 
