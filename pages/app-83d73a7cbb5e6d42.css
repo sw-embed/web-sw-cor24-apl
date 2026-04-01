@@ -531,6 +531,137 @@
     font-weight: 600;
 }
 
+/* Edit button */
+.btn-edit {
+    color: var(--green);
+    border-color: var(--green);
+}
+
+.btn-edit-active {
+    background: var(--green);
+    color: var(--base);
+    border-color: var(--green);
+}
+
+/* Editor panel */
+.editor-panel {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 2px solid var(--surface2);
+    height: 40vh;
+    max-height: 45vh;
+    flex-shrink: 0;
+}
+
+.editor-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    background: var(--mantle);
+    border-bottom: 1px solid var(--surface1);
+}
+
+.editor-title {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--green);
+}
+
+.editor-spacer {
+    flex: 1;
+}
+
+.btn-editor-run {
+    color: var(--green);
+    border-color: var(--green);
+    font-weight: 700;
+}
+
+.btn-editor-run:hover {
+    background: var(--green);
+    color: var(--base);
+}
+
+.btn-editor-dl {
+    color: var(--blue);
+    border-color: var(--blue);
+}
+
+.btn-editor-new {
+    color: var(--text);
+    border-color: var(--surface2);
+}
+
+.btn-editor-close {
+    color: var(--overlay1);
+    border-color: var(--surface2);
+    font-size: 16px;
+    line-height: 1;
+    padding: 2px 8px;
+}
+
+.btn-editor-close:hover {
+    color: var(--red);
+    border-color: var(--red);
+}
+
+.editor-body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.editor-textarea {
+    flex: 1;
+    resize: none;
+    background: var(--base);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 15px;
+    line-height: 1.5;
+    padding: 12px 16px;
+    border: none;
+    outline: none;
+    white-space: pre;
+    overflow-y: auto;
+    tab-size: 4;
+    min-height: 120px;
+}
+
+.editor-textarea::placeholder {
+    color: var(--overlay0);
+}
+
+.editor-preview {
+    flex: 0 0 40%;
+    overflow-y: auto;
+    padding: 12px 16px;
+    background: var(--crust);
+    border-left: 1px solid var(--surface1);
+    font-family: var(--mono);
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--green);
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.editor-preview-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--overlay1);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+}
+
+.editor-preview-line {
+    min-height: 1.5em;
+}
+
 /* Cursor blink animation */
 @keyframes cursor-blink {
     0%, 49% { opacity: 1; }

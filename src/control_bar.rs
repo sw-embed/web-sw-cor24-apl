@@ -23,6 +23,8 @@ pub struct ControlBarProps {
     pub display_mode: DisplayMode,
     pub on_display_mode: Callback<DisplayMode>,
     pub on_help: Callback<()>,
+    pub on_edit: Callback<()>,
+    pub editor_visible: bool,
 }
 
 pub struct ControlBar {
@@ -130,6 +132,11 @@ impl Component for ControlBar {
                            onchange={on_file_change}
                            style="display:none" />
                 </label>
+                <button onclick={ctx.props().on_edit.reform(|_| ())}
+                        class={if ctx.props().editor_visible { "btn btn-edit btn-edit-active" } else { "btn btn-edit" }}
+                        title="Open editor">
+                    { "Edit" }
+                </button>
                 <span class="mode-group">
                     <button onclick={on_mode_repr}
                             class={mode_class(DisplayMode::Repr)}

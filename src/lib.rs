@@ -1,12 +1,14 @@
 pub mod config;
 pub mod control_bar;
 pub mod demos;
+pub mod editor;
 pub mod hardware;
 pub mod help;
 pub mod prettify;
 pub mod repl;
 
 use control_bar::ControlBar;
+use editor::EditorPanel;
 use hardware::HardwarePanel;
 use help::HelpOverlay;
 use prettify::DisplayMode;
@@ -21,6 +23,16 @@ pub enum Msg {
     HwState(bool, Option<u8>, Option<u8>),
     SetDisplayMode(DisplayMode),
     ToggleHelp,
+    /// Open editor with given text (from demo or upload).
+    OpenEditor(String),
+    /// Editor text changed.
+    EditorChanged(String),
+    /// Run the editor contents in the REPL.
+    RunEditor,
+    /// New empty editor.
+    NewEditor,
+    /// Close the editor panel.
+    CloseEditor,
 }
 
 pub struct App {
@@ -33,6 +45,9 @@ pub struct App {
     last_rx: Option<u8>,
     display_mode: DisplayMode,
     help_visible: bool,
+    editor_visible: bool,
+    editor_text: String,
+    editor_dirty: bool,
 }
 
 impl Component for App {
@@ -50,6 +65,9 @@ impl Component for App {
             last_rx: None,
             display_mode: DisplayMode::default(),
             help_visible: false,
+            editor_visible: false,
+            editor_text: String::new(),
+            editor_dirty: false,
         }
     }
 
@@ -64,8 +82,10 @@ impl Component for App {
                 true
             }
             Msg::LoadDemo(text) | Msg::UploadProgram(text) => {
-                self.feed_text = AttrValue::from(text);
-                self.feed_seq = self.feed_seq.wrapping_add(1);
+                // Open in editor instead of immediately running
+                self.editor_text = text;
+                self.editor_dirty = false;
+                self.editor_visible = true;
                 true
             }
             Msg::ToggleS2 => {
@@ -93,6 +113,60 @@ impl Component for App {
                 self.help_visible = !self.help_visible;
                 true
             }
+            Msg::OpenEditor(text) => {
+                if self.editor_dirty {
+                    let win = web_sys::window().unwrap();
+                    if !win
+                        .confirm_with_message("Discard unsaved changes?")
+                        .unwrap_or(false)
+                    {
+                        return false;
+                    }
+                }
+                self.editor_text = text;
+                self.editor_dirty = false;
+                self.editor_visible = true;
+                true
+            }
+            Msg::EditorChanged(text) => {
+                self.editor_text = text;
+                self.editor_dirty = true;
+                true
+            }
+            Msg::RunEditor => {
+                self.feed_text = AttrValue::from(self.editor_text.clone());
+                self.feed_seq = self.feed_seq.wrapping_add(1);
+                self.editor_dirty = false;
+                true
+            }
+            Msg::NewEditor => {
+                if self.editor_dirty {
+                    let win = web_sys::window().unwrap();
+                    if !win
+                        .confirm_with_message("Discard unsaved changes?")
+                        .unwrap_or(false)
+                    {
+                        return false;
+                    }
+                }
+                self.editor_text = String::new();
+                self.editor_dirty = false;
+                self.editor_visible = true;
+                true
+            }
+            Msg::CloseEditor => {
+                if self.editor_dirty {
+                    let win = web_sys::window().unwrap();
+                    if !win
+                        .confirm_with_message("Discard unsaved changes?")
+                        .unwrap_or(false)
+                    {
+                        return false;
+                    }
+                }
+                self.editor_visible = false;
+                true
+            }
         }
     }
 
@@ -107,6 +181,11 @@ impl Component for App {
         let on_display_mode = link.callback(Msg::SetDisplayMode);
         let on_help = link.callback(|()| Msg::ToggleHelp);
         let on_help_close = link.callback(|()| Msg::ToggleHelp);
+        let on_edit = link.callback(|()| Msg::OpenEditor(String::new()));
+        let on_editor_change = link.callback(Msg::EditorChanged);
+        let on_editor_run = link.callback(|()| Msg::RunEditor);
+        let on_editor_new = link.callback(|()| Msg::NewEditor);
+        let on_editor_close = link.callback(|()| Msg::CloseEditor);
 
         html! {
             <>
@@ -136,7 +215,20 @@ impl Component for App {
                 </header>
                 // Control bar
                 <ControlBar {on_reset} {on_demo} {on_upload}
-                    display_mode={self.display_mode} {on_display_mode} {on_help} />
+                    display_mode={self.display_mode} {on_display_mode} {on_help}
+                    {on_edit} editor_visible={self.editor_visible} />
+                // Editor panel (above REPL when visible)
+                if self.editor_visible {
+                    <EditorPanel
+                        text={AttrValue::from(self.editor_text.clone())}
+                        dirty={self.editor_dirty}
+                        display_mode={self.display_mode}
+                        on_change={on_editor_change}
+                        on_run={on_editor_run}
+                        on_new={on_editor_new}
+                        on_close={on_editor_close}
+                    />
+                }
                 // Main content
                 <main id="main-content">
                     <ReplPanel
