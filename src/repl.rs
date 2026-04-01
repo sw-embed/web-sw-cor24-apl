@@ -64,6 +64,12 @@ pub struct ReplPanel {
     last_tx: Option<u8>,
     /// Last RX byte seen.
     last_rx: Option<u8>,
+    /// Command history buffer.
+    history: Vec<String>,
+    /// Current position when browsing history (None = not browsing).
+    history_index: Option<usize>,
+    /// Saved in-progress input when browsing history.
+    history_saved_input: String,
 }
 
 impl ReplPanel {
@@ -201,6 +207,9 @@ impl Component for ReplPanel {
             last_feed_seq: 0,
             last_tx: None,
             last_rx: None,
+            history: Vec::new(),
+            history_index: None,
+            history_saved_input: String::new(),
         }
     }
 
@@ -291,7 +300,44 @@ impl Component for ReplPanel {
                             self.uart_rx_queue.push_back(b);
                         }
                         self.uart_rx_queue.push_back(b'\n');
+                        // Save non-empty input to history
+                        if !self.input.is_empty() {
+                            self.history.push(self.input.clone());
+                        }
                         self.input.clear();
+                        self.history_index = None;
+                        true
+                    }
+                    "ArrowUp" => {
+                        e.prevent_default();
+                        if self.history.is_empty() {
+                            return false;
+                        }
+                        let new_index = match self.history_index {
+                            None => {
+                                self.history_saved_input = self.input.clone();
+                                self.history.len() - 1
+                            }
+                            Some(0) => return false,
+                            Some(i) => i - 1,
+                        };
+                        self.history_index = Some(new_index);
+                        self.input = self.history[new_index].clone();
+                        true
+                    }
+                    "ArrowDown" => {
+                        e.prevent_default();
+                        match self.history_index {
+                            None => return false,
+                            Some(i) if i + 1 < self.history.len() => {
+                                self.history_index = Some(i + 1);
+                                self.input = self.history[i + 1].clone();
+                            }
+                            Some(_) => {
+                                self.history_index = None;
+                                self.input = std::mem::take(&mut self.history_saved_input);
+                            }
+                        }
                         true
                     }
                     "Backspace" => {
