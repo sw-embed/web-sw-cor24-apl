@@ -1,5 +1,6 @@
 //! APL quick-reference help overlay.
 
+use crate::prettify::KEYWORDS;
 use wasm_bindgen::JsCast;
 use web_sys::HtmlElement;
 use yew::prelude::*;
@@ -61,6 +62,39 @@ impl Component for HelpOverlay {
         let onkeydown = ctx.link().callback(Msg::KeyDown);
         let on_backdrop = ctx.link().callback(Msg::BackdropClick);
 
+        // Build keyword rows from the KEYWORDS table.
+        let keyword_rows: Html = KEYWORDS
+            .iter()
+            .map(|kw| {
+                let meaning = if let Some(dyadic) = kw.literate_dyadic {
+                    format!("{} / {}", kw.literate_monadic, dyadic)
+                } else {
+                    kw.literate_monadic.to_string()
+                };
+                let aliases = if let Some(dyadic) = kw.literate_dyadic {
+                    if dyadic != kw.ascii && kw.literate_monadic != kw.ascii {
+                        format!("{}, {}", kw.literate_monadic, dyadic)
+                    } else if kw.literate_monadic != kw.ascii {
+                        kw.literate_monadic.to_string()
+                    } else {
+                        String::new()
+                    }
+                } else if kw.literate_monadic != kw.ascii {
+                    kw.literate_monadic.to_string()
+                } else {
+                    String::new()
+                };
+                html! {
+                    <tr>
+                        <td class="help-key">{ kw.ascii }</td>
+                        <td class="help-glyph">{ kw.glyph }</td>
+                        <td class="help-meaning">{ &meaning }</td>
+                        <td class="help-alias">{ &aliases }</td>
+                    </tr>
+                }
+            })
+            .collect();
+
         html! {
             <div class="help-backdrop" onclick={on_backdrop}>
                 <div class="help-dialog" ref={self.dialog_ref.clone()}
@@ -70,36 +104,35 @@ impl Component for HelpOverlay {
                         <span class="help-hint">{"Esc to close"}</span>
                     </div>
                     <div class="help-body">
+                        <p class="help-intro">
+                            {"The "}
+                            <span class="help-em">{"latin"}</span>
+                            {" / "}
+                            <span class="help-em">{"greek"}</span>
+                            {" / "}
+                            <span class="help-em">{"keywords"}</span>
+                            {" buttons change how output is displayed. \
+                              You can type either the ASCII keyword or its literate alias."}
+                        </p>
+
+                        // — Keyword reference (4-column) —
+                        <table class="help-table help-kw-table">
+                            <tr class="help-col-header">
+                                <td>{"Type"}</td>
+                                <td>{"APL"}</td>
+                                <td>{"Meaning"}</td>
+                                <td>{"Alias"}</td>
+                            </tr>
+                            { keyword_rows }
+                        </table>
+
+                        // — Remaining sections (2-column) —
                         <table class="help-table">
                             <tr class="help-section"><td colspan="2">{"Arithmetic"}</td></tr>
                             <tr><td class="help-key">{"+  \u{2212}  \u{00d7}  \u{00f7}"}</td>
                                 <td>{"add, subtract, multiply, divide (element-wise)"}</td></tr>
                             <tr><td class="help-key">{"+/  \u{2212}/  \u{00d7}/"}</td>
                                 <td>{"reduce: sum, difference, product"}</td></tr>
-
-                            <tr class="help-section"><td colspan="2">{"Arrays"}</td></tr>
-                            <tr><td class="help-key">{"iota N"}</td>
-                                <td>{"index generator: 1 2 \u{2026} N"}</td></tr>
-                            <tr><td class="help-key">{"rho X"}</td>
-                                <td>{"shape (monadic)"}</td></tr>
-                            <tr><td class="help-key">{"S rho X"}</td>
-                                <td>{"reshape (dyadic)"}</td></tr>
-                            <tr><td class="help-key">{"N take X"}</td>
-                                <td>{"take first N elements"}</td></tr>
-                            <tr><td class="help-key">{"N drop X"}</td>
-                                <td>{"drop first N elements"}</td></tr>
-                            <tr><td class="help-key">{"rev X"}</td>
-                                <td>{"reverse"}</td></tr>
-                            <tr><td class="help-key">{"A cat B"}</td>
-                                <td>{"catenate"}</td></tr>
-
-                            <tr class="help-section"><td colspan="2">{"Bitwise / Logic"}</td></tr>
-                            <tr><td class="help-key">{"A and B"}</td>
-                                <td>{"bitwise AND"}</td></tr>
-                            <tr><td class="help-key">{"A or B"}</td>
-                                <td>{"bitwise OR"}</td></tr>
-                            <tr><td class="help-key">{"not X"}</td>
-                                <td>{"bitwise complement"}</td></tr>
 
                             <tr class="help-section"><td colspan="2">{"Variables & Indexing"}</td></tr>
                             <tr><td class="help-key">{"NAME \u{2190} expr"}</td>
@@ -112,24 +145,6 @@ impl Component for HelpOverlay {
                             <tr class="help-section"><td colspan="2">{"Output"}</td></tr>
                             <tr><td class="help-key">{"[] \u{2190} expr"}</td>
                                 <td>{"print to output"}</td></tr>
-
-                            <tr class="help-section"><td colspan="2">{"Hardware I/O"}</td></tr>
-                            <tr><td class="help-key">{"qled"}</td>
-                                <td>{"read/write D2 LED"}</td></tr>
-                            <tr><td class="help-key">{"qsw"}</td>
-                                <td>{"read S2 switch state"}</td></tr>
-                            <tr><td class="help-key">{"qsvo 'name'"}</td>
-                                <td>{"shared variable (MMIO bridge)"}</td></tr>
-                            <tr><td class="help-key">{"MMIO[N]"}</td>
-                                <td>{"direct memory-mapped I/O"}</td></tr>
-
-                            <tr class="help-section"><td colspan="2">{"Control Flow"}</td></tr>
-                            <tr><td class="help-key">{"goto LABEL"}</td>
-                                <td>{"unconditional branch"}</td></tr>
-                            <tr><td class="help-key">{"goto (cond)/LABEL"}</td>
-                                <td>{"conditional branch"}</td></tr>
-                            <tr><td class="help-key">{"LABEL:"}</td>
-                                <td>{"label definition"}</td></tr>
 
                             <tr class="help-section"><td colspan="2">{"System Commands"}</td></tr>
                             <tr><td class="help-key">{")VARS"}</td>

@@ -1,5 +1,5 @@
 use crate::config;
-use crate::prettify::{DisplayMode, Segment, prettify_line};
+use crate::prettify::{DisplayMode, Segment, prettify_line, translate_literate_to_ascii};
 use cor24_emulator::{EmulatorCore, StopReason};
 use gloo::timers::callback::Timeout;
 use std::collections::VecDeque;
@@ -188,7 +188,8 @@ impl ReplPanel {
             if trimmed.is_empty() {
                 continue;
             }
-            for b in trimmed.bytes() {
+            let translated = translate_literate_to_ascii(trimmed);
+            for b in translated.bytes() {
                 self.uart_rx_queue.push_back(b);
             }
             self.uart_rx_queue.push_back(b'\n');
@@ -323,11 +324,13 @@ impl Component for ReplPanel {
                 match key.as_str() {
                     "Enter" => {
                         e.prevent_default();
-                        // Show the input line in output
-                        let line = format!("{PROMPT}{}", self.input);
+                        // Translate literate names to ASCII keywords
+                        let translated = translate_literate_to_ascii(&self.input);
+                        // Show the translated line in output
+                        let line = format!("{PROMPT}{translated}");
                         self.output.push(line);
-                        // Queue input bytes for the emulator's UART
-                        for b in self.input.bytes() {
+                        // Queue translated bytes for the emulator's UART
+                        for b in translated.bytes() {
                             self.uart_rx_queue.push_back(b);
                         }
                         self.uart_rx_queue.push_back(b'\n');
@@ -419,7 +422,7 @@ impl Component for ReplPanel {
                     <div class="repl-input-line">
                         <span class="repl-prompt">{ PROMPT }</span>
                         <span class="repl-input-text">
-                            { Self::render_segments(&prettify_line(&self.input, mode)) }
+                            { Self::render_segments(&prettify_line(&translate_literate_to_ascii(&self.input), mode)) }
                         </span>
                         <span class="repl-cursor">{"\u{2588}"}</span>
                     </div>

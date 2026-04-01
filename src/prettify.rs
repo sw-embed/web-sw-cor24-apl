@@ -21,17 +21,17 @@ pub enum Segment {
     Keyword(String),
 }
 
-struct KeywordEntry {
-    ascii: &'static str,
-    glyph: &'static str,
+pub struct KeywordEntry {
+    pub ascii: &'static str,
+    pub glyph: &'static str,
     /// Literate name when used monadically (prefix): `rho X` → "shape-of"
-    literate_monadic: &'static str,
+    pub literate_monadic: &'static str,
     /// Literate name when used dyadically (infix): `A rho B` → "reshape".
     /// `None` means the keyword is always monadic.
-    literate_dyadic: Option<&'static str>,
+    pub literate_dyadic: Option<&'static str>,
 }
 
-const KEYWORDS: &[KeywordEntry] = &[
+pub const KEYWORDS: &[KeywordEntry] = &[
     KeywordEntry {
         ascii: "rho",
         glyph: "\u{2374}", // ⍴
@@ -176,6 +176,88 @@ fn try_match_keyword(bytes: &[u8]) -> Option<(&'static KeywordEntry, usize)> {
         let kw = entry.ascii.as_bytes();
         if bytes.len() >= kw.len() && &bytes[..kw.len()] == kw {
             return Some((entry, kw.len()));
+        }
+    }
+    None
+}
+
+/// Literate-name-to-ASCII mapping entry, sorted longest-first for matching.
+struct LiterateEntry {
+    literate: &'static str,
+    ascii: &'static str,
+}
+
+/// Build the literate→ASCII lookup table (longest match first).
+fn literate_entries() -> Vec<LiterateEntry> {
+    let mut entries = Vec::new();
+    for kw in KEYWORDS {
+        // Always add monadic literate name.
+        if kw.literate_monadic != kw.ascii {
+            entries.push(LiterateEntry {
+                literate: kw.literate_monadic,
+                ascii: kw.ascii,
+            });
+        }
+        // Add dyadic literate name if it differs from ascii and monadic.
+        if let Some(dyadic) = kw.literate_dyadic
+            && dyadic != kw.ascii
+            && dyadic != kw.literate_monadic
+        {
+            entries.push(LiterateEntry {
+                literate: dyadic,
+                ascii: kw.ascii,
+            });
+        }
+    }
+    // Sort longest-first to avoid partial matches.
+    entries.sort_by(|a, b| b.literate.len().cmp(&a.literate.len()));
+    entries
+}
+
+/// Translate literate names in input to their ASCII keyword equivalents.
+///
+/// For example, `"shape-of 1 2 3"` → `"rho 1 2 3"`, `"3 reshape 4 5 6"` → `"3 rho 4 5 6"`.
+pub fn translate_literate_to_ascii(input: &str) -> String {
+    let entries = literate_entries();
+    if entries.is_empty() {
+        return input.to_string();
+    }
+
+    let bytes = input.as_bytes();
+    let mut result = String::with_capacity(input.len());
+    let mut i = 0;
+
+    while i < bytes.len() {
+        if let Some((entry, len)) = try_match_literate(&entries, &bytes[i..]) {
+            // Check word boundaries: preceding char must not be alphanumeric/hyphen,
+            // following char must not be alphanumeric/hyphen.
+            let at_start = i == 0 || !is_word_char(bytes[i - 1]);
+            let at_end = i + len >= bytes.len() || !is_word_char(bytes[i + len]);
+            if at_start && at_end {
+                result.push_str(entry.ascii);
+                i += len;
+                continue;
+            }
+        }
+        result.push(bytes[i] as char);
+        i += 1;
+    }
+
+    result
+}
+
+fn is_word_char(b: u8) -> bool {
+    b.is_ascii_alphanumeric() || b == b'-'
+}
+
+fn try_match_literate<'a>(
+    entries: &'a [LiterateEntry],
+    bytes: &[u8],
+) -> Option<(&'a LiterateEntry, usize)> {
+    for entry in entries {
+        let lit = entry.literate.as_bytes();
+        if bytes.len() >= lit.len() && bytes[..lit.len()].eq_ignore_ascii_case(lit) {
+            return Some((entry, lit.len()));
         }
     }
     None
