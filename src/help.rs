@@ -1,6 +1,6 @@
 //! APL quick-reference help overlay with tabbed interface.
 
-use crate::prettify::KEYWORDS;
+use crate::prettify::{DisplayMode, KEYWORDS, prettify_line};
 use wasm_bindgen::JsCast;
 use web_sys::HtmlElement;
 use yew::prelude::*;
@@ -229,22 +229,36 @@ impl HelpOverlay {
     fn view_tutorial() -> Html {
         html! {
             <div class="tutorial">
+                <p class="help-intro">
+                    {"You type ASCII keywords ("}
+                    <span class="tut-ascii-hl">{"rho"}</span>
+                    {", "}
+                    <span class="tut-ascii-hl">{"iota"}</span>
+                    {"). The "}
+                    <span class="help-em">{"greek"}</span>
+                    {" display mode shows traditional APL symbols ("}
+                    <span class="tut-glyph-hl">{"\u{2374}"}</span>
+                    {", "}
+                    <span class="tut-glyph-hl">{"\u{2373}"}</span>
+                    {"). Examples below show both."}
+                </p>
+
                 { Self::tutorial_section(
                     "1. Scalars & Arithmetic",
                     "APL works as a calculator. Arithmetic operators are +, -, *, and /. \
-                     Negative numbers are written with an underscore prefix. \
-                     Expressions evaluate right-to-left, not left-to-right.",
+                     Negative numbers use underscore prefix. \
+                     Expressions evaluate right-to-left.",
                     &[
                         ("3 + 4", "7"),
                         ("2 * 3 + 1", "8  (3+1 first, then *2)"),
                         ("(2 * 3) + 1", "7  (parens override)"),
-                        ("10 - _3", "13  (_3 means negative 3)"),
+                        ("10 - _3", "13  (_3 means \u{207b}3)"),
                     ],
                 )}
                 { Self::tutorial_section(
                     "2. Variables",
-                    "Assign values with the arrow (<-). Variable names must be UPPERCASE. \
-                     Use )VARS to list defined variables and )CLEAR to reset the workspace.",
+                    "Assign with <- (\u{2190}). Variable names must be UPPERCASE. \
+                     )VARS lists defined variables; )CLEAR resets the workspace.",
                     &[
                         ("X <- 42", ""),
                         ("X", "42"),
@@ -254,8 +268,8 @@ impl HelpOverlay {
                 )}
                 { Self::tutorial_section(
                     "3. Vectors",
-                    "Type multiple numbers separated by spaces to create a vector. \
-                     Arithmetic applies element-wise. A scalar extends to match a vector.",
+                    "Multiple numbers separated by spaces create a vector. \
+                     Arithmetic applies element-wise. A scalar extends to match.",
                     &[
                         ("1 2 3 4 5", "1 2 3 4 5"),
                         ("1 2 3 + 10 20 30", "11 22 33"),
@@ -264,18 +278,18 @@ impl HelpOverlay {
                 )}
                 { Self::tutorial_section(
                     "4. Iota & Reduce",
-                    "iota N generates integers 1 through N. \
-                     The reduce operator (/) inserts a function between every element.",
+                    "Type iota (displays as \u{2373}) to generate integers 1..N. \
+                     Reduce (/) inserts a function between every element.",
                     &[
                         ("iota 5", "1 2 3 4 5"),
                         ("+/ 1 2 3 4 5", "15  (sum)"),
-                        ("*/ iota 5", "120  (factorial of 5)"),
+                        ("*/ iota 5", "120  (5! = factorial)"),
                     ],
                 )}
                 { Self::tutorial_section(
                     "5. Reshape & Shape",
-                    "rho has two uses: monadic rho returns the shape (dimensions) of an array; \
-                     dyadic rho reshapes data into a given shape.",
+                    "Type rho (displays as \u{2374}). Monadic: returns shape. \
+                     Dyadic: reshapes data. This dual nature is classic APL.",
                     &[
                         ("rho 10 20 30", "3"),
                         ("2 3 rho iota 6", "1 2 3 / 4 5 6  (2\u{00d7}3 matrix)"),
@@ -284,8 +298,8 @@ impl HelpOverlay {
                 )}
                 { Self::tutorial_section(
                     "6. Take & Drop",
-                    "take selects the first N elements; drop removes them. \
-                     Negative arguments work from the end.",
+                    "Type take (\u{2191}) and drop (\u{2193}). \
+                     Positive N from the front, negative N from the end.",
                     &[
                         ("3 take iota 5", "1 2 3"),
                         ("2 drop iota 5", "3 4 5"),
@@ -295,8 +309,7 @@ impl HelpOverlay {
                 )}
                 { Self::tutorial_section(
                     "7. Reverse & Catenate",
-                    "rev reverses an array. cat joins two arrays together. \
-                     Ravel (,) turns any array into a vector.",
+                    "Type rev (\u{233D}) to reverse. Type cat (\u{002C}) to join arrays.",
                     &[
                         ("rev iota 5", "5 4 3 2 1"),
                         ("1 2 3 cat 4 5", "1 2 3 4 5"),
@@ -304,8 +317,8 @@ impl HelpOverlay {
                 )}
                 { Self::tutorial_section(
                     "8. Bracket Indexing",
-                    "Use square brackets to select or update elements. \
-                     Indices start at 1 (index origin).",
+                    "Square brackets select or update elements. \
+                     Indices start at 1 (\u{2395}IO\u{2190}1).",
                     &[
                         ("V <- 10 20 30 40 50", ""),
                         ("V[3]", "30"),
@@ -316,7 +329,7 @@ impl HelpOverlay {
                 )}
                 { Self::tutorial_section(
                     "9. Matrices",
-                    "Reshape creates matrices. Arithmetic works element-wise on matrices too.",
+                    "Reshape (rho / \u{2374}) creates matrices. Arithmetic is element-wise.",
                     &[
                         ("M <- 2 3 rho 1 2 3 4 5 6", ""),
                         ("M + 10", "11 12 13 / 14 15 16"),
@@ -325,8 +338,8 @@ impl HelpOverlay {
                 )}
                 { Self::tutorial_section(
                     "10. Comparison Operators",
-                    "Comparisons return 1 (true) or 0 (false), element-wise on arrays. \
-                     Not-equal is written as <>.",
+                    "Comparisons return 1 (true) or 0 (false), element-wise. \
+                     Not-equal is <>.",
                     &[
                         ("3 > 2", "1"),
                         ("1 2 3 4 5 >= 3", "0 0 1 1 1"),
@@ -335,9 +348,8 @@ impl HelpOverlay {
                 )}
                 { Self::tutorial_section(
                     "11. Control Flow",
-                    "In multiline programs, labels mark jump targets. \
-                     goto branches unconditionally; a conditional branch uses \
-                     an expression that evaluates to a label name or empty.",
+                    "Labels mark jump targets. Type goto (displays as \u{2192}). \
+                     Conditional branch: expression evaluates to label or empty.",
                     &[
                         ("[1]  X <- 1", ""),
                         ("[2]  LOOP: X <- X + 1", ""),
@@ -358,19 +370,18 @@ impl HelpOverlay {
                 )}
                 { Self::tutorial_section(
                     "13. Multiline Programs",
-                    "Enter program lines with [N] prefix. Lines are stored and run with )RUN. \
-                     Use )LIST to review and )ERASE to delete.",
+                    "Enter lines with [N] prefix. Run with )RUN, review with )LIST.",
                     &[
                         ("[1]  [] <- 'HELLO'", ""),
                         ("[2]  [] <- 2 + 2", ""),
-                        (")LIST", "[1] []<-'HELLO' / [2] []<-2+2"),
+                        (")LIST", "[1] []\u{2190}'HELLO' / [2] []\u{2190}2+2"),
                         (")RUN", "HELLO / 4"),
                     ],
                 )}
                 { Self::tutorial_section(
                     "14. User-Defined Functions",
-                    "Define functions with del (nabla). The header names the function \
-                     and its parameters.",
+                    "Define functions with del (\u{2207} nabla). \
+                     The header names the function and its parameters.",
                     &[
                         ("del R <- DOUBLE X", ""),
                         ("[1]  R <- 2 * X", ""),
@@ -380,8 +391,8 @@ impl HelpOverlay {
                 )}
                 { Self::tutorial_section(
                     "15. Hardware I/O",
-                    "The COR24 has hardware registers exposed as quad-variables. \
-                     qled controls the D2 LED; qsw reads the S2 switch.",
+                    "Quad-variables map to COR24 hardware. \
+                     Type qled (\u{2395}LED) for the D2 LED; qsw (\u{2395}SW) for the switch.",
                     &[
                         ("qled <- 1", "turn on the D2 LED"),
                         ("qsw", "read switch (0 or 1)"),
@@ -389,8 +400,8 @@ impl HelpOverlay {
                 )}
                 { Self::tutorial_section(
                     "16. Shared Variables",
-                    "qsvo couples a variable to an auxiliary processor (AP). \
-                     AP 242 provides memory-mapped I/O to COR24 hardware.",
+                    "Type qsvo (\u{2395}SVO) to couple a variable to an auxiliary processor. \
+                     AP 242 provides memory-mapped I/O.",
                     &[
                         ("'X' qsvo 242", "couple X to AP 242"),
                         ("X <- 100", "write 100 to MMIO"),
@@ -399,11 +410,12 @@ impl HelpOverlay {
                 )}
                 { Self::tutorial_section(
                     "17. Bitwise Operations",
-                    "and, or, and not work bitwise on integers.",
+                    "Type and (\u{2227}), or (\u{2228}), not (\u{223C}). \
+                     These work bitwise on integers.",
                     &[
-                        ("7 and 3", "3  (binary: 111 AND 011)"),
-                        ("5 or 2", "7  (binary: 101 OR 010)"),
-                        ("not 0", "65535  (16-bit complement)"),
+                        ("7 and 3", "3  (111 \u{2227} 011)"),
+                        ("5 or 2", "7  (101 \u{2228} 010)"),
+                        ("not 0", "65535  (16-bit \u{223C})"),
                     ],
                 )}
                 { Self::tutorial_section(
@@ -425,19 +437,25 @@ impl HelpOverlay {
         let example_rows: Html = examples
             .iter()
             .map(|(input, output)| {
-                if output.is_empty() {
-                    html! {
+                // Generate the APL glyph version of the input line.
+                let glyph_line = Self::to_glyph(input);
+                let has_glyph = glyph_line != *input;
+
+                html! {
+                    <div class="tut-example-group">
                         <div class="tut-example">
                             <span class="tut-input">{"      "}{*input}</span>
+                            if !output.is_empty() {
+                                <span class="tut-output">{*output}</span>
+                            }
                         </div>
-                    }
-                } else {
-                    html! {
-                        <div class="tut-example">
-                            <span class="tut-input">{"      "}{*input}</span>
-                            <span class="tut-output">{*output}</span>
-                        </div>
-                    }
+                        if has_glyph {
+                            <div class="tut-glyph-line">
+                                <span class="tut-glyph-prefix">{"\u{2192} "}</span>
+                                <span class="tut-glyph-text">{ &glyph_line }</span>
+                            </div>
+                        }
+                    </div>
                 }
             })
             .collect();
@@ -451,5 +469,17 @@ impl HelpOverlay {
                 </div>
             </div>
         }
+    }
+
+    /// Convert an input line from ASCII keywords to APL glyph form.
+    fn to_glyph(input: &str) -> String {
+        use crate::prettify::Segment;
+        let segments = prettify_line(input, DisplayMode::Glyph);
+        segments
+            .iter()
+            .map(|seg| match seg {
+                Segment::Plain(s) | Segment::Keyword(s) => s.as_str(),
+            })
+            .collect()
     }
 }
