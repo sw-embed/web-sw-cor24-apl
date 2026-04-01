@@ -110,6 +110,30 @@ pub const KEYWORDS: &[KeywordEntry] = &[
         literate_monadic: "branch",
         literate_dyadic: None,
     },
+    KeywordEntry {
+        ascii: "compress",
+        glyph: "/",
+        literate_monadic: "compress",
+        literate_dyadic: Some("compress"),
+    },
+    KeywordEntry {
+        ascii: "ceil",
+        glyph: "\u{2308}", // ⌈
+        literate_monadic: "ceiling",
+        literate_dyadic: Some("max"),
+    },
+    KeywordEntry {
+        ascii: "floor",
+        glyph: "\u{230A}", // ⌊
+        literate_monadic: "floor",
+        literate_dyadic: Some("min"),
+    },
+    KeywordEntry {
+        ascii: "del",
+        glyph: "\u{2207}", // ∇
+        literate_monadic: "define-function",
+        literate_dyadic: None,
+    },
 ];
 
 /// Prettify a line according to the display mode.

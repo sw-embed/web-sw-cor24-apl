@@ -34,6 +34,31 @@ V
 ",
     },
     Demo {
+        name: "Ceil & Floor",
+        description: "Max (ceil) and min (floor) of integers",
+        source: "\
+3 ceil 5
+3 floor 5
+1 2 3 ceil 3 2 1
+1 2 3 floor 3 2 1
+ceil/ 4 1 7 2
+floor/ 4 1 7 2
+",
+    },
+    Demo {
+        name: "Character Literals",
+        description: "String values, assignment, and shape",
+        source: "\
+'hello'
+'A'
+''
+A <- 'test'
+A
+rho 'hello'
+rho ''
+",
+    },
+    Demo {
         name: "Comparison Operators",
         description: "Equality, relational, and not-equal tests",
         source: "\
@@ -54,6 +79,16 @@ V
 1 2 3 >= 2
 1 2 3 = 1 2 3
 1 2 3 = 1 0 3
+",
+    },
+    Demo {
+        name: "Compress",
+        description: "Boolean mask filtering of arrays",
+        source: "\
+1 0 1 compress 10 20 30
+1 1 1 compress 4 5 6
+0 0 0 compress 4 5 6
+(3 = iota 5) compress iota 5
 ",
     },
     Demo {
@@ -214,6 +249,17 @@ MMIO[0]
 ",
     },
     Demo {
+        name: "String Operations",
+        description: "String repetition, cycling, and catenation",
+        source: "\
+5 rho '#'
+3 rho 'ab'
+rho 5 rho '#'
+'hi' cat ' world'
+'a' cat 'b'
+",
+    },
+    Demo {
         name: "System Commands",
         description: "Workspace management with )VARS and )CLEAR",
         source: "\
@@ -235,6 +281,17 @@ _3 take A
 2 drop A
 _2 drop A
 2 take 2 3 rho iota 6
+",
+    },
+    Demo {
+        name: "User-Defined Functions",
+        description: "Define and call functions with del",
+        source: "\
+del R <- DOUBLE X
+R <- X + X
+del
+DOUBLE 7
+DOUBLE iota 4
 ",
     },
     Demo {

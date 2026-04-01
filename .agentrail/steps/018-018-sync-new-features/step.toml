@@ -1,0 +1,11 @@
+number = 18
+slug = "018-sync-new-features"
+status = "in-progress"
+description = """
+Phase 18: Sync new CLI features to Web UI — demos and prettification.
+
+The ..."""
+role = "production"
+context_files = []
+created_at = "2026-04-01T15:07:08"
+task_type = "feature"
