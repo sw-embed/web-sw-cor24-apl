@@ -151,6 +151,7 @@ impl Component for ControlBar {
                         class="btn btn-help" title="APL Quick Reference">
                     {"?"}
                 </button>
+                <span class="corner-spacer"></span>
             </div>
         }
     }

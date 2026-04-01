@@ -267,6 +267,13 @@
     text-align: center;
 }
 
+/* Spacer to keep controls clear of the GitHub corner */
+.corner-spacer {
+    display: inline-block;
+    width: 5ch;
+    flex-shrink: 0;
+}
+
 /* Help overlay */
 .help-backdrop {
     position: fixed;
