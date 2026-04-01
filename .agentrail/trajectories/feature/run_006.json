@@ -1,0 +1,11 @@
+{
+  "task_type": "feature",
+  "state": {
+    "number": 11,
+    "step": "011-help-overlay"
+  },
+  "action": "Write help.rs, Edit lib.rs control_bar.rs app.css, cargo clippy, cargo fmt, cargo test, trunk build, git commit+push",
+  "result": "success",
+  "reward": 1,
+  "timestamp": "2026-04-01T04:23:55"
+}

@@ -6,8 +6,8 @@
     <title>APL — COR24 Environment</title>
     
 <script type="module">
-import init, * as bindings from '/web-sw-cor24-apl/web-sw-cor24-apl-a380d306fb5bd599.js';
-const wasm = await init({ module_or_path: '/web-sw-cor24-apl/web-sw-cor24-apl-a380d306fb5bd599_bg.wasm' });
+import init, * as bindings from '/web-sw-cor24-apl/web-sw-cor24-apl-77991572a382bbfa.js';
+const wasm = await init({ module_or_path: '/web-sw-cor24-apl/web-sw-cor24-apl-77991572a382bbfa_bg.wasm' });
 
 
 window.wasmBindings = bindings;
@@ -16,7 +16,7 @@ window.wasmBindings = bindings;
 dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
 
 </script>
-    <link rel="stylesheet" href="/web-sw-cor24-apl/app-37a21351b8fa41d9.css" integrity="sha384-W5jcFtYtSNR+miY41Wb+26/aoEC2myo2wMmygR8+f/mN4Ud5/RhwJB7gEHFuQArH"/>
+    <link rel="stylesheet" href="/web-sw-cor24-apl/app-edfbab2a447302dd.css" integrity="sha384-SH3Ay1sP91PCCfrUbUzkfIrMt5O81Z+NNw2AILV8ZDxlQo2Im7+4vU9bFXNLB68r"/>
     <style>
         /* Catppuccin Mocha */
         :root {
@@ -109,8 +109,10 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
             top: 0;
             right: 0;
             z-index: 100;
+            pointer-events: none;
         }
         .github-corner svg {
+            pointer-events: auto;
             fill: var(--blue);
             color: var(--base);
         }
@@ -123,7 +125,7 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
             40%, 80% { transform: rotate(10deg); }
         }
     </style>
-<link rel="modulepreload" href="/web-sw-cor24-apl/web-sw-cor24-apl-a380d306fb5bd599.js" crossorigin="anonymous" integrity="sha384-WIjLgOcq2QpxMcJYQPRe+3eSO+u/uFKV6VDH5xit3r/2fR1+8m1atxBL6a6r3QRM"><link rel="preload" href="/web-sw-cor24-apl/web-sw-cor24-apl-a380d306fb5bd599_bg.wasm" crossorigin="anonymous" integrity="sha384-/qUetuKJL5qkbFYH5HvUNvCnDdQAu/ytwIs+Izliv1NrqEpqaYLDxZFUV1T9VF0A" as="fetch" type="application/wasm"></head>
+<link rel="modulepreload" href="/web-sw-cor24-apl/web-sw-cor24-apl-77991572a382bbfa.js" crossorigin="anonymous" integrity="sha384-ZbLEOzjLWaqwDxdv+clAvjzRgOcD4b5Mjg0jawTk2Gcu8Wm24EXvaT02vm1gEuhv"><link rel="preload" href="/web-sw-cor24-apl/web-sw-cor24-apl-77991572a382bbfa_bg.wasm" crossorigin="anonymous" integrity="sha384-a5+lM2cjo7mDznWNKZUolzo1czS8M+T8MUHSGqN4C28HEGDMPM20GG6SngJTxGJ7" as="fetch" type="application/wasm"></head>
 <body>
     <div id="app"></div>
 </body>

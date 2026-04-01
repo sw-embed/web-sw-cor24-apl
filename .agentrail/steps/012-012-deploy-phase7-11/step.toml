@@ -1,6 +1,6 @@
 number = 12
 slug = "012-deploy-phase7-11"
-status = "pending"
+status = "in-progress"
 description = """
 Phase 12: Build, test, and deploy all Phase 7-11 features to GitHub Pages.
 

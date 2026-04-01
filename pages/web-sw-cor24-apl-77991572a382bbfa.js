@@ -64,12 +64,20 @@ function __wbg_get_imports() {
             const ret = clearTimeout(arg0);
             return ret;
         },
+        __wbg_clientHeight_753e57ac23f26441: function(arg0) {
+            const ret = arg0.clientHeight;
+            return ret;
+        },
         __wbg_cloneNode_4d4a14340ffeae80: function() { return handleError(function (arg0) {
             const ret = arg0.cloneNode();
             return ret;
         }, arguments); },
         __wbg_composedPath_c23138576a40cb0e: function(arg0) {
             const ret = arg0.composedPath();
+            return ret;
+        },
+        __wbg_contains_9d37ef9e3be092fa: function(arg0, arg1) {
+            const ret = arg0.contains(arg1);
             return ret;
         },
         __wbg_createElementNS_5721594a7147b772: function() { return handleError(function (arg0, arg1, arg2, arg3, arg4) {
@@ -143,6 +151,16 @@ function __wbg_get_imports() {
             let result;
             try {
                 result = arg0 instanceof Element;
+            } catch (_) {
+                result = false;
+            }
+            const ret = result;
+            return ret;
+        },
+        __wbg_instanceof_HtmlElement_51b34b7de7e6e993: function(arg0) {
+            let result;
+            try {
+                result = arg0 instanceof HTMLElement;
             } catch (_) {
                 result = false;
             }
@@ -278,6 +296,10 @@ function __wbg_get_imports() {
         }, arguments); },
         __wbg_scrollHeight_e5da4964ec46e25e: function(arg0) {
             const ret = arg0.scrollHeight;
+            return ret;
+        },
+        __wbg_scrollTop_5b42f122f9c262d4: function(arg0) {
+            const ret = arg0.scrollTop;
             return ret;
         },
         __wbg_setAttribute_81f03c9a783fca26: function() { return handleError(function (arg0, arg1, arg2, arg3, arg4) {

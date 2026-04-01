@@ -64,6 +64,7 @@
     flex-direction: column;
     min-height: 0;
     outline: none;
+    position: relative;
 }
 
 .repl-panel:focus {
@@ -103,6 +104,27 @@
 .repl-cursor {
     color: var(--text);
     animation: cursor-blink 1.06s step-end infinite;
+}
+
+/* Scroll-to-bottom indicator */
+.scroll-to-bottom {
+    position: absolute;
+    bottom: 12px;
+    left: 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 4px 10px;
+    border: 1px solid var(--surface2);
+    border-radius: 4px;
+    cursor: pointer;
+    background: rgba(24, 24, 37, 0.9);
+    color: var(--blue);
+    z-index: 10;
+}
+
+.scroll-to-bottom:hover {
+    background: var(--surface0);
+    color: var(--text);
 }
 
 /* Hardware panel — floating bottom-right */
@@ -203,6 +225,7 @@
     display: inline-flex;
     gap: 0;
     margin-left: auto;
+    margin-right: 80px;
 }
 
 .btn-mode {
@@ -233,6 +256,99 @@
 .apl-keyword {
     color: var(--mauve);
     font-weight: 600;
+}
+
+/* Help button */
+.btn-help {
+    color: var(--yellow);
+    border-color: var(--yellow);
+    font-weight: 700;
+    min-width: 28px;
+    text-align: center;
+}
+
+/* Help overlay */
+.help-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.help-dialog {
+    background: var(--surface0);
+    border: 1px solid var(--surface2);
+    border-radius: 8px;
+    max-width: 540px;
+    width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    outline: none;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.help-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--surface1);
+}
+
+.help-title {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.help-hint {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--overlay1);
+}
+
+.help-body {
+    padding: 12px 16px;
+}
+
+.help-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text);
+}
+
+.help-table td {
+    padding: 2px 8px 2px 0;
+    vertical-align: top;
+}
+
+.help-section td {
+    padding-top: 10px;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--mauve);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.help-key {
+    white-space: nowrap;
+    color: var(--green);
+    min-width: 120px;
+}
+
+.help-note {
+    padding-top: 8px;
+    font-style: italic;
+    color: var(--subtext0);
+    font-size: 12px;
 }
 
 /* Cursor blink animation */
