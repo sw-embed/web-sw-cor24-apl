@@ -74,6 +74,42 @@ const KEYWORDS: &[KeywordEntry] = &[
         literate_monadic: "share",
         literate_dyadic: None,
     },
+    KeywordEntry {
+        ascii: "rev",
+        glyph: "\u{233D}", // ⌽
+        literate_monadic: "reverse",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "cat",
+        glyph: "\u{002C}", // ,
+        literate_monadic: "ravel",
+        literate_dyadic: Some("catenate"),
+    },
+    KeywordEntry {
+        ascii: "and",
+        glyph: "\u{2227}", // ∧
+        literate_monadic: "and",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "or",
+        glyph: "\u{2228}", // ∨
+        literate_monadic: "or",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "not",
+        glyph: "\u{223C}", // ∼
+        literate_monadic: "complement",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "goto",
+        glyph: "\u{2192}", // →
+        literate_monadic: "branch",
+        literate_dyadic: None,
+    },
 ];
 
 /// Prettify a line according to the display mode.
