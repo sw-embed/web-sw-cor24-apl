@@ -1,0 +1,11 @@
+number = 17
+slug = "017-editor-mode"
+status = "pending"
+description = """
+Phase 17: Design and implement an editor mode for APL programs.
+
+Add an edito..."""
+role = "production"
+context_files = []
+created_at = "2026-04-01T10:10:53"
+task_type = "feature"

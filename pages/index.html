@@ -6,8 +6,8 @@
     <title>APL — COR24 Environment</title>
     
 <script type="module">
-import init, * as bindings from '/web-sw-cor24-apl/web-sw-cor24-apl-7d7dc6950fb281fc.js';
-const wasm = await init({ module_or_path: '/web-sw-cor24-apl/web-sw-cor24-apl-7d7dc6950fb281fc_bg.wasm' });
+import init, * as bindings from '/web-sw-cor24-apl/web-sw-cor24-apl-4d4202121177973e.js';
+const wasm = await init({ module_or_path: '/web-sw-cor24-apl/web-sw-cor24-apl-4d4202121177973e_bg.wasm' });
 
 
 window.wasmBindings = bindings;
@@ -16,7 +16,7 @@ window.wasmBindings = bindings;
 dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
 
 </script>
-    <link rel="stylesheet" href="/web-sw-cor24-apl/app-190650defadd1310.css" integrity="sha384-xkpeYuBz4GrhNaKPHrNyeRnOKbkrxhKe35mfJTugdtqAbA9UjFt4s4iJUa/z86w8"/>
+    <link rel="stylesheet" href="/web-sw-cor24-apl/app-218ff738bf90d7ce.css" integrity="sha384-+Re86BgbaHBrESJM7iK51lq77Y8BMDPoIVZH9Ln8NuHAJsnxrjtbLsDIqm8Gq/Wl"/>
     <style>
         /* Catppuccin Mocha */
         :root {
@@ -125,7 +125,7 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
             40%, 80% { transform: rotate(10deg); }
         }
     </style>
-<link rel="modulepreload" href="/web-sw-cor24-apl/web-sw-cor24-apl-7d7dc6950fb281fc.js" crossorigin="anonymous" integrity="sha384-ZbLEOzjLWaqwDxdv+clAvjzRgOcD4b5Mjg0jawTk2Gcu8Wm24EXvaT02vm1gEuhv"><link rel="preload" href="/web-sw-cor24-apl/web-sw-cor24-apl-7d7dc6950fb281fc_bg.wasm" crossorigin="anonymous" integrity="sha384-gMeO+if8SbH/SVOh/V5cObXpApXc/iZnOy4QQsf9Zfr4zUzlL0OVo3ove6gYyGON" as="fetch" type="application/wasm"></head>
+<link rel="modulepreload" href="/web-sw-cor24-apl/web-sw-cor24-apl-4d4202121177973e.js" crossorigin="anonymous" integrity="sha384-ZbLEOzjLWaqwDxdv+clAvjzRgOcD4b5Mjg0jawTk2Gcu8Wm24EXvaT02vm1gEuhv"><link rel="preload" href="/web-sw-cor24-apl/web-sw-cor24-apl-4d4202121177973e_bg.wasm" crossorigin="anonymous" integrity="sha384-ZG3O/cIxwibGDbGxCrxI5lcaF/b30x3ddHwXR1hlrbz6Z31vUxcEHKacq3HZjoBQ" as="fetch" type="application/wasm"></head>
 <body>
     <div id="app"></div>
 </body>

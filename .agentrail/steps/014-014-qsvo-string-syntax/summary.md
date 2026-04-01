@@ -1,0 +1,1 @@
+Updated web demos (Bitwise Operations, Shared Variables) to use IBM 5100 string syntax 'MMIO' qsvo 242. Made qsvo dyadic in prettification table. C interpreter already supported string literals from prior work.

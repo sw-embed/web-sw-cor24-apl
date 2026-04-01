@@ -34,6 +34,29 @@ V
 ",
     },
     Demo {
+        name: "Comparison Operators",
+        description: "Equality, relational, and not-equal tests",
+        source: "\
+3 = 3
+3 = 4
+5 > 3
+3 > 5
+5 < 3
+3 < 5
+5 >= 5
+5 >= 3
+3 >= 5
+5 <= 5
+3 <= 5
+5 <= 3
+3 != 3
+3 != 4
+1 2 3 >= 2
+1 2 3 = 1 2 3
+1 2 3 = 1 0 3
+",
+    },
+    Demo {
         name: "Control Flow",
         description: "Counting loop with goto and labels",
         source: "\
@@ -43,6 +66,31 @@ LOOP:
 I <- I - 1
 goto (I)/LOOP
 [] <- 0
+",
+    },
+    Demo {
+        name: "Edge Cases",
+        description: "Empty vectors, single-element, nested parens",
+        source: "\
+iota 0
+rho iota 0
+rev iota 0
+(iota 0) cat iota 3
+(iota 0) + (iota 0)
+0 take iota 5
+5 drop iota 5
+0 rho 1 2 3
+rho 0 rho 1 2 3
++/ iota 0
+iota 1
++/ iota 1
+1 rho 5
+rho 1 rho 5
+1 1 rho 5
+rho 1 1 rho 5
+((((1 + 2))))
+(((((((42)))))))
+(1 + (2 + (3 + (4 + 5))))
 ",
     },
     Demo {
@@ -84,6 +132,18 @@ iota 10
 ",
     },
     Demo {
+        name: "Matrix Take & Drop",
+        description: "Take and drop rows/columns from matrices",
+        source: "\
+1 3 take 3 3 rho iota 9
+_1 3 take 3 3 rho iota 9
+1 3 drop 3 3 rho iota 9
+_1 3 drop 3 3 rho iota 9
+2 3 take 3 3 rho iota 9
+rho 2 3 take 3 3 rho iota 9
+",
+    },
+    Demo {
         name: "Matrices",
         description: "Matrix operations with reshape",
         source: "\
@@ -91,6 +151,21 @@ iota 10
 (2 3 rho iota 6) + (2 3 rho 10 20 30 40 50 60)
 10 + 2 3 rho iota 6
 (2 3 rho iota 6) * 2
+",
+    },
+    Demo {
+        name: "Multiline Programs",
+        description: "Line entry, list, run, and erase",
+        source: "\
+[1] N <- 0
+[2] LOOP: N <- N + 1
+[3] [] <- N
+[4] goto (5 - N)/LOOP
+[5] [] <- 99
+)LIST
+)RUN
+)ERASE
+)LIST
 ",
     },
     Demo {
@@ -136,6 +211,18 @@ MMIO[0]
 MMIO[257]
 MMIO[0] <- 0
 MMIO[0]
+",
+    },
+    Demo {
+        name: "System Commands",
+        description: "Workspace management with )VARS and )CLEAR",
+        source: "\
+A <- 5
+B <- 10
+)VARS
+A + B
+)CLEAR
+)VARS
 ",
     },
     Demo {

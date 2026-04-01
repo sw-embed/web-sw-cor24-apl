@@ -1,0 +1,11 @@
+number = 16
+slug = "016-tutorial-tab"
+status = "pending"
+description = """
+Phase 16: Add a Tutorial tab to the help dialog (launched by the ? button).
+
+..."""
+role = "production"
+context_files = []
+created_at = "2026-04-01T10:10:43"
+task_type = "feature"

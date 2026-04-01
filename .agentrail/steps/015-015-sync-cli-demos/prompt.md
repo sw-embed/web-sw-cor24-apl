@@ -1,0 +1,3 @@
+Phase 15: Sync CLI APL demos to the Web UI demo dropdown.
+
+Review samples in ../sw-cor24-apl/samples/ and compare with src/demos.rs. Add missing demos that work interactively in the Web UI REPL. Candidates include: Comparison Operators (15-comparison.apl), System Commands (11-system-cmds.apl), Edge Cases (13-edge-cases.apl), Matrix Take & Drop (10-matrix-take-drop.apl), and Multiline Programs (14-multiline.apl) if they work via UART input. Translate GNU APL Unicode syntax to COR24 ASCII surface syntax (rho, iota, take, drop, rev, cat, _N for negative). Maintain strict alphabetical order in the DEMOS array. Skip batch-*.apl and uart-echo.apl (test harness files, not interactive demos). Build and verify the dropdown renders correctly.

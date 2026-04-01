@@ -1,0 +1,1 @@
+Added read-only ⎕IO←0 indicator badge to the control bar. Positioned after the help button with teal Catppuccin styling, bordered badge appearance, and tooltip explaining 0-based indexing effect on iota. Always visible so users understand why iota 5 produces 0 1 2 3 4.
