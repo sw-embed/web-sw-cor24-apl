@@ -1,0 +1,1 @@
+Added 5 new demos (Ceil & Floor, Character Literals, Compress, String Operations, User-Defined Functions) and 4 new prettification keywords (compress, ceil, floor, del) to sync CLI interpreter features to web UI. All demos verified via Playwright. Help overlay auto-populates new keywords. Pages rebuilt and deployed.
