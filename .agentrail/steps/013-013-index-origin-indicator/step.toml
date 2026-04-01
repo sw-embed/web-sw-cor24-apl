@@ -1,0 +1,10 @@
+number = 13
+slug = "013-index-origin-indicator"
+status = "pending"
+description = """
+Phase 13: Show index origin (⎕IO) indicator in the UI.
+
+The COR24 APL inter..."""
+role = "production"
+context_files = []
+created_at = "2026-03-31T19:33:42"

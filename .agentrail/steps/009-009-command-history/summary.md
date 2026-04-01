@@ -1,0 +1,1 @@
+Added readline-style command history to the REPL. ArrowUp/ArrowDown browse previously entered commands; in-progress input is saved and restored when navigating past history end. Three new fields on ReplPanel (history Vec, history_index, history_saved_input) and two new key handlers. All checks pass, committed and pushed.

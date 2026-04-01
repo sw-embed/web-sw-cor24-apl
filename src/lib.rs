@@ -2,11 +2,13 @@ pub mod config;
 pub mod control_bar;
 pub mod demos;
 pub mod hardware;
+pub mod help;
 pub mod prettify;
 pub mod repl;
 
 use control_bar::ControlBar;
 use hardware::HardwarePanel;
+use help::HelpOverlay;
 use prettify::DisplayMode;
 use repl::ReplPanel;
 use yew::prelude::*;
@@ -18,6 +20,7 @@ pub enum Msg {
     ToggleS2,
     HwState(bool, Option<u8>, Option<u8>),
     SetDisplayMode(DisplayMode),
+    ToggleHelp,
 }
 
 pub struct App {
@@ -29,6 +32,7 @@ pub struct App {
     last_tx: Option<u8>,
     last_rx: Option<u8>,
     display_mode: DisplayMode,
+    help_visible: bool,
 }
 
 impl Component for App {
@@ -45,6 +49,7 @@ impl Component for App {
             last_tx: None,
             last_rx: None,
             display_mode: DisplayMode::default(),
+            help_visible: false,
         }
     }
 
@@ -84,6 +89,10 @@ impl Component for App {
                     false
                 }
             }
+            Msg::ToggleHelp => {
+                self.help_visible = !self.help_visible;
+                true
+            }
         }
     }
 
@@ -96,6 +105,8 @@ impl Component for App {
         let on_s2_toggle = link.callback(|()| Msg::ToggleS2);
         let on_hw_state = link.callback(|(led, tx, rx)| Msg::HwState(led, tx, rx));
         let on_display_mode = link.callback(Msg::SetDisplayMode);
+        let on_help = link.callback(|()| Msg::ToggleHelp);
+        let on_help_close = link.callback(|()| Msg::ToggleHelp);
 
         html! {
             <>
@@ -125,7 +136,7 @@ impl Component for App {
                 </header>
                 // Control bar
                 <ControlBar {on_reset} {on_demo} {on_upload}
-                    display_mode={self.display_mode} {on_display_mode} />
+                    display_mode={self.display_mode} {on_display_mode} {on_help} />
                 // Main content
                 <main id="main-content">
                     <ReplPanel
@@ -144,6 +155,9 @@ impl Component for App {
                         {on_s2_toggle}
                     />
                 </main>
+                if self.help_visible {
+                    <HelpOverlay on_close={on_help_close} />
+                }
                 // Footer
                 <footer>
                     <span>{"MIT License"}</span>

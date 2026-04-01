@@ -1,0 +1,1 @@
+Implemented scroll-lock behavior: added user_scrolled_up flag, Scroll/ScrollToBottom messages, onscroll event on output container with 20px threshold, conditional auto-scroll, and floating '↓ Bottom' button with CSS styling. Clippy/fmt/test/trunk build all clean.

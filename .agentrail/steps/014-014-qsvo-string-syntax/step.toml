@@ -1,0 +1,10 @@
+number = 14
+slug = "014-qsvo-string-syntax"
+status = "pending"
+description = """
+Phase 14: Change qsvo to accept string left argument like IBM 5100 APL.
+
+In s..."""
+role = "production"
+context_files = []
+created_at = "2026-04-01T03:50:18"

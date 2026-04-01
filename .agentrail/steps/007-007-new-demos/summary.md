@@ -1,0 +1,1 @@
+Added 6 new demos (Bitwise Operations, Bracket Indexing, Control Flow, Error Handling, Reverse & Catenate, Take & Drop) and reordered all 14 demos alphabetically by name. All checks pass.

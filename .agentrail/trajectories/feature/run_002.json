@@ -1,0 +1,11 @@
+{
+  "task_type": "feature",
+  "state": {
+    "number": 7,
+    "step": "007-new-demos"
+  },
+  "action": "Edit demos.rs, cargo clippy, cargo build, cargo test, git commit+push",
+  "result": "success",
+  "reward": 1,
+  "timestamp": "2026-03-31T19:25:23"
+}

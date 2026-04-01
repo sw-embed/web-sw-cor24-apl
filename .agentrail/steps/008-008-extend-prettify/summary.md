@@ -1,0 +1,1 @@
+Added 6 new keyword entries to KEYWORDS table in src/prettify.rs: rev (⌽ reverse), cat (, ravel/catenate), and (∧), or (∨), not (∼ complement), goto (→ branch). All three display modes now cover Phase 7 demo keywords. Clippy, fmt, build, tests all pass. Committed and pushed.

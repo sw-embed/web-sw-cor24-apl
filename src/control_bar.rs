@@ -22,6 +22,7 @@ pub struct ControlBarProps {
     pub on_upload: Callback<String>,
     pub display_mode: DisplayMode,
     pub on_display_mode: Callback<DisplayMode>,
+    pub on_help: Callback<()>,
 }
 
 pub struct ControlBar {
@@ -146,6 +147,10 @@ impl Component for ControlBar {
                         {"keywords"}
                     </button>
                 </span>
+                <button onclick={ctx.props().on_help.reform(|_| ())}
+                        class="btn btn-help" title="APL Quick Reference">
+                    {"?"}
+                </button>
             </div>
         }
     }
