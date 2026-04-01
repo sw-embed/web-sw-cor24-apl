@@ -1,6 +1,6 @@
 number = 17
 slug = "017-editor-mode"
-status = "pending"
+status = "in-progress"
 description = """
 Phase 17: Design and implement an editor mode for APL programs.
 

@@ -1,0 +1,11 @@
+{
+  "task_type": "feature",
+  "state": {
+    "number": 16,
+    "step": "016-tutorial-tab"
+  },
+  "action": "Edit help.rs (tabbed interface, tutorial content, to_glyph helper), Edit app.css (tab styles, tutorial styles, glyph line styles), cargo clippy/fmt/test, build-pages.sh, Playwright navigate/click/screenshot/get_visible_text, git commit+push",
+  "result": "success",
+  "reward": 1,
+  "timestamp": "2026-04-01T10:34:17"
+}
