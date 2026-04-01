@@ -6,9 +6,57 @@ pub struct Demo {
     pub source: &'static str,
 }
 
-/// Demo programs in COR24 APL ASCII syntax.
+/// Demo programs in COR24 APL ASCII syntax (alphabetical order).
 /// Each line is sent to the interpreter via UART as if the user typed it.
 pub const DEMOS: &[Demo] = &[
+    Demo {
+        name: "Bitwise Operations",
+        description: "Bitwise and, or, not on integers",
+        source: "\
+7 and 3
+5 or 3
+not 0
+not 1
+1 2 3 and 3 2 1
+MMIO qsvo 242
+MMIO[257] and 2
+",
+    },
+    Demo {
+        name: "Bracket Indexing",
+        description: "Read and write vector elements by index",
+        source: "\
+V <- 10 20 30 40 50
+V[0]
+V[3]
+V[2] <- 99
+V
+",
+    },
+    Demo {
+        name: "Control Flow",
+        description: "Counting loop with goto and labels",
+        source: "\
+I <- 5
+LOOP:
+[] <- I
+I <- I - 1
+goto (I)/LOOP
+[] <- 0
+",
+    },
+    Demo {
+        name: "Error Handling",
+        description: "All six error types, REPL recovers",
+        source: "\
+@bad
+1 / 0
+UNDEF
+1 2 3 + 4 5
++/ 2 3 rho iota 6
+3 + 4
+",
+    },
     Demo {
         name: "Hardware I/O",
         description: "LED and switch via quad-variables",
@@ -21,19 +69,6 @@ qled
 qsw
 qled <- qsw
 qled
-",
-    },
-    Demo {
-        name: "Shared Variables",
-        description: "MMIO via qsvo 242 (AP 242 shared variable coupling)",
-        source: "\
-MMIO qsvo 242
-MMIO[0]
-MMIO[0] <- 1
-MMIO[0]
-MMIO[257]
-MMIO[0] <- 0
-MMIO[0]
 ",
     },
     Demo {
@@ -69,6 +104,15 @@ rho 2 3 rho iota 6
 ",
     },
     Demo {
+        name: "Reverse & Catenate",
+        description: "Reverse, ravel, and catenate arrays",
+        source: "\
+rev 1 2 3 4 5
+cat 2 3 rho iota 6
+1 2 3 cat 4 5 6
+",
+    },
+    Demo {
         name: "Scalars",
         description: "Scalar arithmetic and parentheses",
         source: "\
@@ -79,6 +123,31 @@ rho 2 3 rho iota 6
 2 + 3 * 4
 (2 + 3) * 4
 _3 + 10
+",
+    },
+    Demo {
+        name: "Shared Variables",
+        description: "MMIO via qsvo 242 (AP 242 shared variable coupling)",
+        source: "\
+MMIO qsvo 242
+MMIO[0]
+MMIO[0] <- 1
+MMIO[0]
+MMIO[257]
+MMIO[0] <- 0
+MMIO[0]
+",
+    },
+    Demo {
+        name: "Take & Drop",
+        description: "Select elements from the front or end",
+        source: "\
+A <- iota 10
+3 take A
+_3 take A
+2 drop A
+_2 drop A
+2 take 2 3 rho iota 6
 ",
     },
     Demo {
