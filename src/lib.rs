@@ -9,10 +9,12 @@ pub mod repl;
 
 use control_bar::ControlBar;
 use editor::EditorPanel;
+use gloo::events::EventListener;
 use hardware::HardwarePanel;
 use help::HelpOverlay;
 use prettify::{DisplayMode, translate_glyph_to_ascii};
 use repl::ReplPanel;
+use wasm_bindgen::JsCast;
 use yew::prelude::*;
 
 pub enum Msg {
@@ -36,6 +38,12 @@ pub enum Msg {
     NewEditor,
     /// Close the editor panel.
     CloseEditor,
+    /// Start dragging the panel divider.
+    DividerDragStart(i32),
+    /// Mouse moved during divider drag.
+    DividerDragMove(i32),
+    /// Mouse released — stop dragging.
+    DividerDragEnd,
 }
 
 pub struct App {
@@ -51,6 +59,14 @@ pub struct App {
     editor_visible: bool,
     editor_text: String,
     editor_dirty: bool,
+    /// Editor panel width as a percentage (0.0–100.0). 50.0 = even split.
+    editor_width_pct: f64,
+    /// True while the user is dragging the divider.
+    divider_dragging: bool,
+    /// Event listeners kept alive during drag.
+    _drag_listeners: Vec<EventListener>,
+    /// Ref to #main-content for computing drag position.
+    main_ref: NodeRef,
 }
 
 impl Component for App {
@@ -71,10 +87,14 @@ impl Component for App {
             editor_visible: false,
             editor_text: String::new(),
             editor_dirty: false,
+            editor_width_pct: 50.0,
+            divider_dragging: false,
+            _drag_listeners: Vec::new(),
+            main_ref: NodeRef::default(),
         }
     }
 
-    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
+    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             Msg::Reset => {
                 self.reset_seq = self.reset_seq.wrapping_add(1);
@@ -147,6 +167,10 @@ impl Component for App {
                 true
             }
             Msg::RunEditor => {
+                // Reset the interpreter first so we start from a clean state.
+                // This ensures a prior )OFF halt or leftover variables don't
+                // interfere with the new program.
+                self.reset_seq = self.reset_seq.wrapping_add(1);
                 self.feed_text = AttrValue::from(self.editor_text.clone());
                 self.feed_seq = self.feed_seq.wrapping_add(1);
                 self.editor_dirty = false;
@@ -180,6 +204,39 @@ impl Component for App {
                 self.editor_visible = false;
                 true
             }
+            Msg::DividerDragStart(_x) => {
+                self.divider_dragging = true;
+                let win = web_sys::window().unwrap();
+                let link = ctx.link().clone();
+                let on_move = EventListener::new(&win, "mousemove", move |e| {
+                    let me = e.dyn_ref::<web_sys::MouseEvent>().unwrap();
+                    link.send_message(Msg::DividerDragMove(me.client_x()));
+                });
+                let link = ctx.link().clone();
+                let on_up = EventListener::new(&win, "mouseup", move |_| {
+                    link.send_message(Msg::DividerDragEnd);
+                });
+                self._drag_listeners = vec![on_move, on_up];
+                true
+            }
+            Msg::DividerDragMove(x) => {
+                if let Some(el) = self.main_ref.cast::<web_sys::HtmlElement>() {
+                    let rect = el.get_bounding_client_rect();
+                    let left = rect.left();
+                    let width = rect.width();
+                    if width > 0.0 {
+                        let pct = ((x as f64 - left) / width * 100.0).clamp(20.0, 80.0);
+                        self.editor_width_pct = pct;
+                        return true;
+                    }
+                }
+                false
+            }
+            Msg::DividerDragEnd => {
+                self.divider_dragging = false;
+                self._drag_listeners.clear();
+                true
+            }
         }
     }
 
@@ -200,6 +257,26 @@ impl Component for App {
         let on_editor_run = link.callback(|()| Msg::RunEditor);
         let on_editor_new = link.callback(|()| Msg::NewEditor);
         let on_editor_close = link.callback(|()| Msg::CloseEditor);
+        let on_divider_down = link.callback(|e: MouseEvent| {
+            e.prevent_default();
+            Msg::DividerDragStart(e.client_x())
+        });
+
+        let editor_style = if self.editor_visible {
+            format!("flex: 0 0 {:.1}%;", self.editor_width_pct)
+        } else {
+            String::new()
+        };
+
+        let main_class = if self.editor_visible {
+            if self.divider_dragging {
+                "side-by-side dragging"
+            } else {
+                "side-by-side"
+            }
+        } else {
+            ""
+        };
 
         html! {
             <>
@@ -232,7 +309,8 @@ impl Component for App {
                     display_mode={self.display_mode} {on_display_mode} {on_help}
                     {on_edit} editor_visible={self.editor_visible} />
                 // Main content — editor left, REPL right
-                <main id="main-content" class={if self.editor_visible { "side-by-side" } else { "" }}>
+                <main id="main-content" class={main_class}
+                      ref={self.main_ref.clone()}>
                     if self.editor_visible {
                         <EditorPanel
                             text={AttrValue::from(self.editor_text.clone())}
@@ -242,7 +320,9 @@ impl Component for App {
                             on_run={on_editor_run}
                             on_new={on_editor_new}
                             on_close={on_editor_close}
+                            style={editor_style.clone()}
                         />
+                        <div class="panel-divider" onmousedown={on_divider_down}></div>
                     }
                     <ReplPanel
                         reset_seq={self.reset_seq}

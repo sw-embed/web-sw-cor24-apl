@@ -28,6 +28,9 @@ pub struct EditorPanelProps {
     pub on_new: Callback<()>,
     /// Called when the user clicks Close.
     pub on_close: Callback<()>,
+    /// Optional inline style (e.g. for drag-resized width).
+    #[prop_or_default]
+    pub style: AttrValue,
 }
 
 pub struct EditorPanel {
@@ -148,7 +151,7 @@ impl Component for EditorPanel {
         let dirty_marker = if props.dirty { " *" } else { "" };
 
         html! {
-            <div class="editor-panel">
+            <div class="editor-panel" style={props.style.clone()}>
                 <div class="editor-toolbar">
                     <span class="editor-title">
                         { format!("Editor{dirty_marker}") }

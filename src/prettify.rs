@@ -134,6 +134,36 @@ pub const KEYWORDS: &[KeywordEntry] = &[
         literate_monadic: "define-function",
         literate_dyadic: None,
     },
+    KeywordEntry {
+        ascii: "pick",
+        glyph: "\u{2283}", // ⊃
+        literate_monadic: "disclose",
+        literate_dyadic: Some("pick"),
+    },
+    KeywordEntry {
+        ascii: "roll",
+        glyph: "?",
+        literate_monadic: "roll",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "fmt",
+        glyph: "\u{2355}", // ⍕
+        literate_monadic: "format",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "qout",
+        glyph: "\u{2395}\u{2190}", // ⎕←
+        literate_monadic: "print",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "qrl",
+        glyph: "\u{2395}RL", // ⎕RL
+        literate_monadic: "random-link",
+        literate_dyadic: None,
+    },
 ];
 
 /// Prettify a line according to the display mode.
@@ -301,6 +331,16 @@ const GLYPH_MAP: &[GlyphEntry] = &[
         ascii: "qsw",
         pad: true,
     },
+    GlyphEntry {
+        glyph: "\u{2395}RL",
+        ascii: "qrl",
+        pad: true,
+    }, // ⎕RL random link
+    GlyphEntry {
+        glyph: "\u{2395}\u{2190}",
+        ascii: "qout <-",
+        pad: false,
+    }, // ⎕← quad output
     // Single-char APL glyphs → keywords
     GlyphEntry {
         glyph: "\u{2374}",
@@ -362,6 +402,27 @@ const GLYPH_MAP: &[GlyphEntry] = &[
         ascii: "del",
         pad: true,
     }, // ∇
+    // Newer single-char APL glyphs → keywords
+    GlyphEntry {
+        glyph: "\u{2283}",
+        ascii: "pick",
+        pad: true,
+    }, // ⊃ pick/disclose
+    GlyphEntry {
+        glyph: "\u{2355}",
+        ascii: "fmt",
+        pad: true,
+    }, // ⍕ format
+    GlyphEntry {
+        glyph: "\u{235D}",
+        ascii: "#",
+        pad: false,
+    }, // ⍝ comment → #
+    GlyphEntry {
+        glyph: "?",
+        ascii: "roll",
+        pad: true,
+    }, // ? roll (monadic random)
     // Non-keyword APL characters → ASCII operators (no padding needed)
     GlyphEntry {
         glyph: "\u{2190}",

@@ -155,6 +155,81 @@ qled
 ",
     },
     Demo {
+        name: "Horse Race",
+        description: "4 named horses race with track visualization",
+        source: "\
+qrl <- 42
+NH <- 4
+GOAL <- 15
+POS <- NH rho 0
+RND <- 0
+NAMES <- 'Thndr' 'Lghtn' 'Storm' 'Blaze'
+#
+del R <- TRACK X
+R <- 0
+I <- 0
+SHOW: R <- (I pick NAMES) cat '|' cat (X[I] rho '#')
+qout <- R
+I <- I + 1
+goto (I < NH)/SHOW
+del
+#
+del R <- RACE X
+R <- 0
+NEXT: RND <- RND + 1
+qout <- '=== Round ' cat fmt RND
+POS <- POS + roll NH rho 3
+TRACK POS
+LEAD <- ceil/ POS
+qout <- 'Leader at ' cat fmt LEAD
+DONE <- or/ POS >= GOAL
+goto (DONE = 0)/NEXT
+WIN <- (POS >= GOAL) compress iota NH
+NW <- rho WIN
+qout <- 'Race over!'
+goto (NW > 1)/TIE
+qout <- 'Winner: ' cat ((0 pick WIN) pick NAMES)
+goto 0
+TIE: qout <- (fmt NW) cat '-way tie!'
+del
+#
+qout <- '*** HORSE RACE ***'
+Z <- RACE 0
+)OFF
+",
+    },
+    Demo {
+        name: "Horse Race (Idiomatic)",
+        description: "Compact APL horse race with names and track",
+        source: "\
+qrl <- 42
+NAMES <- 'Lucky' 'Thndr' 'Shadw' 'Comet' 'Blaze'
+NH <- 5
+#
+del R <- SHOW X
+R <- 0
+I <- 0
+S: qout <- (I pick NAMES) cat '|' cat ((I pick POS) rho '#')
+I <- I + 1
+goto (I < NH)/S
+del
+#
+del R <- RACE X
+R <- 0
+POS <- NH rho 0
+qout <- 'THE RACE IS ON!'
+L: POS <- POS + roll NH rho 3
+SHOW 0
+qout <- ''
+goto (0 = or/ POS >= 15)/L
+qout <- 'WINNER: ' cat ((0 pick (POS = ceil/ POS) compress iota NH) pick NAMES)
+del
+#
+Z <- RACE 0
+)OFF
+",
+    },
+    Demo {
         name: "Iota & Reduce",
         description: "Index generation and reduction",
         source: "\

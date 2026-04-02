@@ -115,7 +115,14 @@ impl Component for HelpOverlay {
                                 {"Tutorial"}
                             </span>
                         </div>
-                        <span class="help-hint">{"Esc to close"}</span>
+                        <div class="help-header-right">
+                            <span class="help-hint">{"Esc to close"}</span>
+                            <button class="help-close-btn"
+                                    onclick={ctx.props().on_close.reform(|_| ())}
+                                    title="Close">
+                                {"\u{00d7}"}
+                            </button>
+                        </div>
                     </div>
                     <div class="help-body">
                         { body }
@@ -203,7 +210,9 @@ impl HelpOverlay {
 
                     <tr class="help-section"><td colspan="2">{"Output"}</td></tr>
                     <tr><td class="help-key">{"[] \u{2190} expr"}</td>
-                        <td>{"print to output"}</td></tr>
+                        <td>{"print to output (line entry)"}</td></tr>
+                    <tr><td class="help-key">{"qout \u{2190} expr"}</td>
+                        <td>{"print to output (in functions)"}</td></tr>
 
                     <tr class="help-section"><td colspan="2">{"System Commands"}</td></tr>
                     <tr><td class="help-key">{")VARS"}</td>
@@ -419,7 +428,22 @@ impl HelpOverlay {
                     ],
                 )}
                 { Self::tutorial_section(
-                    "18. Edge Cases & Errors",
+                    "18. Pick, Roll & Format",
+                    "Type pick (\u{2283}) to index into nested arrays. \
+                     Type roll (?) for random integers. \
+                     Type fmt (\u{2355}) to convert numbers to strings. \
+                     Type qout (\u{2395}\u{2190}) for explicit output in functions.",
+                    &[
+                        ("NAMES <- 'hi' 'bye'", ""),
+                        ("0 pick NAMES", "hi  (first element)"),
+                        ("roll 6", "(random 1\u{2013}6)"),
+                        ("roll 4 rho 6", "(4 random 1\u{2013}6)"),
+                        ("fmt 42", "'42'  (number \u{2192} string)"),
+                        ("qout <- 'hello'", "hello  (explicit print)"),
+                    ],
+                )}
+                { Self::tutorial_section(
+                    "19. Edge Cases & Errors",
                     "APL reports errors clearly. Empty vectors are valid. \
                      Division by zero and domain errors are caught.",
                     &[
