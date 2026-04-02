@@ -9,8 +9,10 @@ use yew::prelude::*;
 
 pub enum Msg {
     DemoSelected(usize),
-    FileChanged(File),
-    FileLoaded(String),
+    ImportFileSelected(File),
+    ImportFileLoaded(String),
+    UploadFileSelected(File),
+    UploadFileLoaded(String),
     Reset,
     SetDisplayMode(DisplayMode),
 }
@@ -19,6 +21,9 @@ pub enum Msg {
 pub struct ControlBarProps {
     pub on_reset: Callback<()>,
     pub on_demo: Callback<String>,
+    /// Import a real APL file (Unicode glyphs → ASCII keywords).
+    pub on_import: Callback<String>,
+    /// Upload a native .a24 file (already ASCII keywords).
     pub on_upload: Callback<String>,
     pub display_mode: DisplayMode,
     pub on_display_mode: Callback<DisplayMode>,
@@ -57,17 +62,32 @@ impl Component for ControlBar {
                 }
                 true
             }
-            Msg::FileChanged(file) => {
+            Msg::ImportFileSelected(file) => {
                 let link = ctx.link().clone();
                 let reader = gloo::file::callbacks::read_as_text(&file, move |result| {
                     if let Ok(text) = result {
-                        link.send_message(Msg::FileLoaded(text));
+                        link.send_message(Msg::ImportFileLoaded(text));
                     }
                 });
                 self._reader = Some(reader);
                 false
             }
-            Msg::FileLoaded(text) => {
+            Msg::ImportFileLoaded(text) => {
+                self._reader = None;
+                ctx.props().on_import.emit(text);
+                false
+            }
+            Msg::UploadFileSelected(file) => {
+                let link = ctx.link().clone();
+                let reader = gloo::file::callbacks::read_as_text(&file, move |result| {
+                    if let Ok(text) = result {
+                        link.send_message(Msg::UploadFileLoaded(text));
+                    }
+                });
+                self._reader = Some(reader);
+                false
+            }
+            Msg::UploadFileLoaded(text) => {
                 self._reader = None;
                 ctx.props().on_upload.emit(text);
                 false
@@ -90,10 +110,16 @@ impl Component for ControlBar {
             Msg::DemoSelected(idx)
         });
 
-        let on_file_change = link.callback(|e: Event| {
+        let on_import_change = link.callback(|e: Event| {
             let input: HtmlInputElement = e.target_unchecked_into();
             let file = input.files().and_then(|fl| fl.get(0)).unwrap();
-            Msg::FileChanged(File::from(file))
+            Msg::ImportFileSelected(File::from(file))
+        });
+
+        let on_upload_change = link.callback(|e: Event| {
+            let input: HtmlInputElement = e.target_unchecked_into();
+            let file = input.files().and_then(|fl| fl.get(0)).unwrap();
+            Msg::UploadFileSelected(File::from(file))
         });
 
         let current_mode = ctx.props().display_mode;
@@ -126,10 +152,16 @@ impl Component for ControlBar {
                         }
                     })}
                 </select>
-                <label class="btn btn-upload">
-                    {"Upload .apl"}
-                    <input type="file" accept=".apl,.txt"
-                           onchange={on_file_change}
+                <label class="btn btn-upload" title="Import APL file (converts Unicode glyphs to ASCII)">
+                    {"Import .apl"}
+                    <input type="file" accept=".apl"
+                           onchange={on_import_change}
+                           style="display:none" />
+                </label>
+                <label class="btn btn-upload" title="Load native COR24 APL file">
+                    {"Open .a24"}
+                    <input type="file" accept=".a24,.txt"
+                           onchange={on_upload_change}
                            style="display:none" />
                 </label>
                 <button onclick={ctx.props().on_edit.reform(|_| ())}

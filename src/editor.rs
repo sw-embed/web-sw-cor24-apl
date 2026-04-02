@@ -35,8 +35,8 @@ pub struct EditorPanel {
 }
 
 impl EditorPanel {
-    /// Trigger a file download of the given text as a .apl file.
-    fn download_apl(text: &str) {
+    /// Trigger a file download of the given text as a .a24 file.
+    fn download_a24(text: &str) {
         use wasm_bindgen::JsCast;
         let doc = web_sys::window().unwrap().document().unwrap();
         let a = doc.create_element("a").unwrap();
@@ -49,7 +49,7 @@ impl EditorPanel {
         .unwrap();
         let url = web_sys::Url::create_object_url_with_blob(&blob).unwrap();
         a.set_attribute("href", &url).unwrap();
-        a.set_attribute("download", "program.apl").unwrap();
+        a.set_attribute("download", "program.a24").unwrap();
         a.unchecked_ref::<web_sys::HtmlElement>().click();
         web_sys::Url::revoke_object_url(&url).unwrap();
     }
@@ -111,7 +111,7 @@ impl Component for EditorPanel {
                     .map(translate_literate_to_ascii)
                     .collect::<Vec<_>>()
                     .join("\n");
-                Self::download_apl(&translated);
+                Self::download_a24(&translated);
                 false
             }
             Msg::New => {
@@ -158,7 +158,7 @@ impl Component for EditorPanel {
                         { "\u{25B6} Run" }
                     </button>
                     <button onclick={on_download} class="btn btn-editor-dl"
-                        title="Download as .apl file">
+                        title="Download as .a24 file">
                         { "\u{2913} Save" }
                     </button>
                     <button onclick={on_new} class="btn btn-editor-new"

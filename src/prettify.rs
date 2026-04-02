@@ -274,6 +274,164 @@ fn is_word_char(b: u8) -> bool {
     b.is_ascii_alphanumeric() || b == b'-'
 }
 
+/// Entry in the glyph-to-ASCII reverse mapping table.
+struct GlyphEntry {
+    glyph: &'static str,
+    ascii: &'static str,
+    /// If true, insert spaces around the replacement when adjacent to alphanumerics.
+    /// Needed for multi-char alphabetic keywords (rho, iota) but not for operators (<-, *).
+    pad: bool,
+}
+
+/// Glyph-to-ASCII mapping, longest glyphs first to avoid partial matches.
+const GLYPH_MAP: &[GlyphEntry] = &[
+    // Multi-char quad-variable glyphs (longest first)
+    GlyphEntry {
+        glyph: "\u{2395}SVO",
+        ascii: "qsvo",
+        pad: true,
+    },
+    GlyphEntry {
+        glyph: "\u{2395}LED",
+        ascii: "qled",
+        pad: true,
+    },
+    GlyphEntry {
+        glyph: "\u{2395}SW",
+        ascii: "qsw",
+        pad: true,
+    },
+    // Single-char APL glyphs → keywords
+    GlyphEntry {
+        glyph: "\u{2374}",
+        ascii: "rho",
+        pad: true,
+    }, // ⍴
+    GlyphEntry {
+        glyph: "\u{2373}",
+        ascii: "iota",
+        pad: true,
+    }, // ⍳
+    GlyphEntry {
+        glyph: "\u{2191}",
+        ascii: "take",
+        pad: true,
+    }, // ↑
+    GlyphEntry {
+        glyph: "\u{2193}",
+        ascii: "drop",
+        pad: true,
+    }, // ↓
+    GlyphEntry {
+        glyph: "\u{233D}",
+        ascii: "rev",
+        pad: true,
+    }, // ⌽
+    GlyphEntry {
+        glyph: "\u{2227}",
+        ascii: "and",
+        pad: true,
+    }, // ∧
+    GlyphEntry {
+        glyph: "\u{2228}",
+        ascii: "or",
+        pad: true,
+    }, // ∨
+    GlyphEntry {
+        glyph: "\u{223C}",
+        ascii: "not",
+        pad: true,
+    }, // ∼
+    GlyphEntry {
+        glyph: "\u{2192}",
+        ascii: "goto",
+        pad: true,
+    }, // →
+    GlyphEntry {
+        glyph: "\u{2308}",
+        ascii: "ceil",
+        pad: true,
+    }, // ⌈
+    GlyphEntry {
+        glyph: "\u{230A}",
+        ascii: "floor",
+        pad: true,
+    }, // ⌊
+    GlyphEntry {
+        glyph: "\u{2207}",
+        ascii: "del",
+        pad: true,
+    }, // ∇
+    // Non-keyword APL characters → ASCII operators (no padding needed)
+    GlyphEntry {
+        glyph: "\u{2190}",
+        ascii: "<-",
+        pad: false,
+    }, // ← assignment
+    GlyphEntry {
+        glyph: "\u{00D7}",
+        ascii: "*",
+        pad: false,
+    }, // × multiply
+    GlyphEntry {
+        glyph: "\u{00F7}",
+        ascii: "/",
+        pad: false,
+    }, // ÷ divide
+    GlyphEntry {
+        glyph: "\u{00AF}",
+        ascii: "_",
+        pad: false,
+    }, // ¯ high minus (negative prefix)
+];
+
+/// Translate APL Unicode glyphs to COR24 ASCII keywords.
+///
+/// Converts a real APL source file (e.g. from GNU APL) into our ASCII dialect.
+/// Single-char glyphs like `⍴` become keywords like `rho` with space padding
+/// to ensure proper word boundaries. Operator characters like `←` become `<-`.
+pub fn translate_glyph_to_ascii(input: &str) -> String {
+    let mut result = String::with_capacity(input.len());
+    let chars: Vec<char> = input.chars().collect();
+    let mut i = 0;
+
+    while i < chars.len() {
+        if let Some((entry, char_count)) = try_match_glyph(&chars[i..]) {
+            if entry.pad {
+                // Add space before if preceded by alphanumeric
+                if !result.is_empty() && result.ends_with(|c: char| c.is_alphanumeric()) {
+                    result.push(' ');
+                }
+                result.push_str(entry.ascii);
+                // Add space after if followed by alphanumeric
+                if i + char_count < chars.len() && chars[i + char_count].is_alphanumeric() {
+                    result.push(' ');
+                }
+            } else {
+                result.push_str(entry.ascii);
+            }
+            i += char_count;
+        } else {
+            result.push(chars[i]);
+            i += 1;
+        }
+    }
+
+    result
+}
+
+fn try_match_glyph(chars: &[char]) -> Option<(&'static GlyphEntry, usize)> {
+    // Collect chars into a string for matching (up to max glyph length of 4)
+    let max_len = chars.len().min(4);
+    let window: String = chars[..max_len].iter().collect();
+    for entry in GLYPH_MAP {
+        if window.starts_with(entry.glyph) {
+            return Some((entry, entry.glyph.chars().count()));
+        }
+    }
+    None
+}
+
 fn try_match_literate<'a>(
     entries: &'a [LiterateEntry],
     bytes: &[u8],

@@ -1,5 +1,7 @@
 use crate::config;
-use crate::prettify::{DisplayMode, Segment, prettify_line, translate_literate_to_ascii};
+use crate::prettify::{
+    DisplayMode, Segment, prettify_line, translate_glyph_to_ascii, translate_literate_to_ascii,
+};
 use cor24_emulator::{EmulatorCore, StopReason};
 use gloo::timers::callback::Timeout;
 use std::collections::VecDeque;
@@ -153,10 +155,10 @@ impl ReplPanel {
         }
     }
 
-    /// Render a single output line, applying prettification to echoed input lines.
+    /// Render a single output line, applying prettification based on display mode.
     fn render_line(line: &str, mode: DisplayMode) -> Html {
-        // Lines starting with the 6-space prompt are echoed user input — prettify those.
         if let Some(content) = line.strip_prefix(PROMPT) {
+            // Echoed user input — prettify the content after the prompt.
             let segments = prettify_line(content, mode);
             html! {
                 <div class="repl-line">
@@ -165,7 +167,9 @@ impl ReplPanel {
                 </div>
             }
         } else {
-            html! { <div class="repl-line">{ line }</div> }
+            // Interpreter output — also prettify (handles )LIST output, etc.)
+            let segments = prettify_line(line, mode);
+            html! { <div class="repl-line">{ Self::render_segments(&segments) }</div> }
         }
     }
 
@@ -188,7 +192,7 @@ impl ReplPanel {
             if trimmed.is_empty() {
                 continue;
             }
-            let translated = translate_literate_to_ascii(trimmed);
+            let translated = translate_literate_to_ascii(&translate_glyph_to_ascii(trimmed));
             for b in translated.bytes() {
                 self.uart_rx_queue.push_back(b);
             }

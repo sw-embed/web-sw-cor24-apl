@@ -11,13 +11,16 @@ use control_bar::ControlBar;
 use editor::EditorPanel;
 use hardware::HardwarePanel;
 use help::HelpOverlay;
-use prettify::DisplayMode;
+use prettify::{DisplayMode, translate_glyph_to_ascii};
 use repl::ReplPanel;
 use yew::prelude::*;
 
 pub enum Msg {
     Reset,
     LoadDemo(String),
+    /// Import a real APL file — convert Unicode glyphs to ASCII keywords.
+    ImportAplFile(String),
+    /// Upload a native .a24 file (already ASCII keywords).
     UploadProgram(String),
     ToggleS2,
     HwState(bool, Option<u8>, Option<u8>),
@@ -81,8 +84,18 @@ impl Component for App {
                 self.last_rx = None;
                 true
             }
+            Msg::ImportAplFile(text) => {
+                // Convert Unicode APL glyphs to our ASCII keyword dialect
+                self.editor_text = text
+                    .lines()
+                    .map(translate_glyph_to_ascii)
+                    .collect::<Vec<_>>()
+                    .join("\n");
+                self.editor_dirty = false;
+                self.editor_visible = true;
+                true
+            }
             Msg::LoadDemo(text) | Msg::UploadProgram(text) => {
-                // Open in editor instead of immediately running
                 self.editor_text = text;
                 self.editor_dirty = false;
                 self.editor_visible = true;
@@ -175,6 +188,7 @@ impl Component for App {
 
         let on_reset = link.callback(|()| Msg::Reset);
         let on_demo = link.callback(Msg::LoadDemo);
+        let on_import = link.callback(Msg::ImportAplFile);
         let on_upload = link.callback(Msg::UploadProgram);
         let on_s2_toggle = link.callback(|()| Msg::ToggleS2);
         let on_hw_state = link.callback(|(led, tx, rx)| Msg::HwState(led, tx, rx));
@@ -214,23 +228,22 @@ impl Component for App {
                     <span>{"COR24 Environment"}</span>
                 </header>
                 // Control bar
-                <ControlBar {on_reset} {on_demo} {on_upload}
+                <ControlBar {on_reset} {on_demo} {on_import} {on_upload}
                     display_mode={self.display_mode} {on_display_mode} {on_help}
                     {on_edit} editor_visible={self.editor_visible} />
-                // Editor panel (above REPL when visible)
-                if self.editor_visible {
-                    <EditorPanel
-                        text={AttrValue::from(self.editor_text.clone())}
-                        dirty={self.editor_dirty}
-                        display_mode={self.display_mode}
-                        on_change={on_editor_change}
-                        on_run={on_editor_run}
-                        on_new={on_editor_new}
-                        on_close={on_editor_close}
-                    />
-                }
-                // Main content
-                <main id="main-content">
+                // Main content — editor left, REPL right
+                <main id="main-content" class={if self.editor_visible { "side-by-side" } else { "" }}>
+                    if self.editor_visible {
+                        <EditorPanel
+                            text={AttrValue::from(self.editor_text.clone())}
+                            dirty={self.editor_dirty}
+                            display_mode={self.display_mode}
+                            on_change={on_editor_change}
+                            on_run={on_editor_run}
+                            on_new={on_editor_new}
+                            on_close={on_editor_close}
+                        />
+                    }
                     <ReplPanel
                         reset_seq={self.reset_seq}
                         feed_text={self.feed_text.clone()}
