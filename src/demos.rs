@@ -26,10 +26,10 @@ MMIO[257] and 2
         name: "Bracket Indexing",
         description: "Read and write vector elements by index",
         source: "\
-V <- 10 20 30 40 50
+V assign 10 20 30 40 50
 V[0]
 V[3]
-V[2] <- 99
+V[2] assign 99
 V
 ",
     },
@@ -52,10 +52,22 @@ floor/ 4 1 7 2
 'hello'
 'A'
 ''
-A <- 'test'
+A assign 'test'
 A
 rho 'hello'
 rho ''
+",
+    },
+    Demo {
+        name: "Comments",
+        description: "Full-line and inline comments",
+        source: "\
+comment This is a full-line comment
+A assign 5 comment inline comment after expression
+qout assign A + 3
+comment Another comment
+B assign 10 20 30
+qout assign +/ B comment sum of vector
 ",
     },
     Demo {
@@ -95,12 +107,26 @@ rho ''
         name: "Control Flow",
         description: "Counting loop with goto and labels",
         source: "\
-I <- 5
+I assign 5
 LOOP:
-[] <- I
-I <- I - 1
+[] assign I
+I assign I - 1
 goto (I)/LOOP
-[] <- 0
+[] assign 0
+",
+    },
+    Demo {
+        name: "Delay",
+        description: "Pause execution with qdl (milliseconds)",
+        source: "\
+qout assign 'start'
+qdl 100
+qout assign 'after 100ms'
+qdl 50
+qout assign 'after 50ms'
+N assign 200
+qdl N
+qout assign 'after 200ms'
 ",
     },
     Demo {
@@ -141,16 +167,30 @@ UNDEF
 ",
     },
     Demo {
+        name: "Format",
+        description: "Convert numbers to strings with fmt",
+        source: "\
+fmt 42
+fmt _7
+fmt 0
+fmt 1 2 3
+rho fmt 42
+rho fmt 100
+'ROUND ' cat fmt 5
+'Score: ' cat fmt 123
+",
+    },
+    Demo {
         name: "Hardware I/O",
         description: "LED and switch via quad-variables",
         source: "\
 qled
-qled <- 1
+qled assign 1
 qled
-qled <- 0
+qled assign 0
 qled
 qsw
-qled <- qsw
+qled assign qsw
 qled
 ",
     },
@@ -158,43 +198,46 @@ qled
         name: "Horse Race",
         description: "4 named horses race with track visualization",
         source: "\
-qrl <- 42
-NH <- 4
-GOAL <- 15
-POS <- NH rho 0
-RND <- 0
-NAMES <- 'Thndr' 'Lghtn' 'Storm' 'Blaze'
-#
-del R <- TRACK X
-R <- 0
-I <- 0
-SHOW: R <- (I pick NAMES) cat '|' cat (X[I] rho '#')
-qout <- R
-I <- I + 1
+comment Horse Race -- Full Version
+comment 4 named horses race with track visualization
+qio assign 0
+qrl assign 42
+NH assign 4
+GOAL assign 15
+POS assign NH rho 0
+RND assign 0
+NAMES assign 'Thndr' 'Lghtn' 'Storm' 'Blaze'
+comment
+del R assign TRACK X
+R assign 0
+I assign 0
+SHOW: R assign (I pick NAMES) cat '|' cat (X[I] rho '#')
+qout assign R
+I assign I + 1
 goto (I < NH)/SHOW
 del
-#
-del R <- RACE X
-R <- 0
-NEXT: RND <- RND + 1
-qout <- '=== Round ' cat fmt RND
-POS <- POS + roll NH rho 3
+comment
+del R assign RACE X
+R assign 0
+NEXT: RND assign RND + 1
+qout assign '=== Round ' cat fmt RND
+POS assign POS + roll NH rho 3
 TRACK POS
-LEAD <- ceil/ POS
-qout <- 'Leader at ' cat fmt LEAD
-DONE <- or/ POS >= GOAL
+LEAD assign ceil/ POS
+qout assign 'Leader at ' cat fmt LEAD
+DONE assign or/ POS >= GOAL
 goto (DONE = 0)/NEXT
-WIN <- (POS >= GOAL) compress iota NH
-NW <- rho WIN
-qout <- 'Race over!'
+WIN assign (POS >= GOAL) compress iota NH
+NW assign rho WIN
+qout assign 'Race over!'
 goto (NW > 1)/TIE
-qout <- 'Winner: ' cat ((0 pick WIN) pick NAMES)
+qout assign 'Winner: ' cat ((0 pick WIN) pick NAMES)
 goto 0
-TIE: qout <- (fmt NW) cat '-way tie!'
+TIE: qout assign (fmt NW) cat '-way tie!'
 del
-#
-qout <- '*** HORSE RACE ***'
-Z <- RACE 0
+comment
+qout assign '*** HORSE RACE ***'
+Z assign RACE 0
 )OFF
 ",
     },
@@ -202,31 +245,47 @@ Z <- RACE 0
         name: "Horse Race (Idiomatic)",
         description: "Compact APL horse race with names and track",
         source: "\
-qrl <- 42
-NAMES <- 'Lucky' 'Thndr' 'Shadw' 'Comet' 'Blaze'
-NH <- 5
-#
-del R <- SHOW X
-R <- 0
-I <- 0
-S: qout <- (I pick NAMES) cat '|' cat ((I pick POS) rho '#')
-I <- I + 1
+qio assign 0
+qrl assign 42
+NAMES assign 'Lucky' 'Thndr' 'Shadw' 'Comet' 'Blaze'
+NH assign 5
+comment
+del R assign SHOW X
+R assign 0
+I assign 0
+S: qout assign (I pick NAMES) cat '|' cat ((I pick POS) rho '#')
+I assign I + 1
 goto (I < NH)/S
 del
-#
-del R <- RACE X
-R <- 0
-POS <- NH rho 0
-qout <- 'THE RACE IS ON!'
-L: POS <- POS + roll NH rho 3
+comment
+del R assign RACE X
+R assign 0
+POS assign NH rho 0
+qout assign 'THE RACE IS ON!'
+L: POS assign POS + roll NH rho 3
 SHOW 0
-qout <- ''
+qout assign ''
 goto (0 = or/ POS >= 15)/L
-qout <- 'WINNER: ' cat ((0 pick (POS = ceil/ POS) compress iota NH) pick NAMES)
+qout assign 'WINNER: ' cat ((0 pick (POS = ceil/ POS) compress iota NH) pick NAMES)
 del
-#
-Z <- RACE 0
+comment
+Z assign RACE 0
 )OFF
+",
+    },
+    Demo {
+        name: "Index Origin",
+        description: "Switch between 1-based and 0-based indexing with qio",
+        source: "\
+qio
+iota 5
+qio assign 0
+iota 5
+V assign 10 20 30
+V[0]
+qio assign 1
+iota 5
+V[1]
 ",
     },
     Demo {
@@ -239,6 +298,16 @@ iota 10
 +/ iota 10
 -/ 1 2 3
 */ 1 2 3 4
+",
+    },
+    Demo {
+        name: "Lazy Iota",
+        description: "Large iota without WS FULL (lazy evaluation)",
+        source: "\
+comment Lazy iota: iota N uses only 4 heap words regardless of N
+rho iota 999999
+5 take iota 999999
+5 take 5 drop iota 999999
 ",
     },
     Demo {
@@ -267,15 +336,62 @@ rho 2 3 take 3 3 rho iota 9
         name: "Multiline Programs",
         description: "Line entry, list, run, and erase",
         source: "\
-[1] N <- 0
-[2] LOOP: N <- N + 1
-[3] [] <- N
+[1] N assign 0
+[2] LOOP: N assign N + 1
+[3] [] assign N
 [4] goto (5 - N)/LOOP
-[5] [] <- 99
+[5] [] assign 99
 )LIST
 )RUN
 )ERASE
 )LIST
+",
+    },
+    Demo {
+        name: "Nested Arrays",
+        description: "String arrays and nested structure",
+        source: "\
+'cat' 'dog' 'fish'
+rho 'cat' 'dog' 'fish'
+A assign 'hello' 'world'
+A
+rho A
+'one' 'two' 'three' 'four'
+",
+    },
+    Demo {
+        name: "OR & AND Reduce",
+        description: "Logical or/ and and/ reduction",
+        source: "\
+comment or/ reduce tests
+or/ 0 0 1 0
+or/ 0 0 0 0
+or/ 1 1 1 1
+comment and/ reduce tests
+and/ 1 1 1 1
+and/ 1 1 0 1
+and/ 0 0 0 0
+comment mixed with expressions
+A assign 0 1 0 1
+or/ A
+and/ A
+",
+    },
+    Demo {
+        name: "Quad Output",
+        description: "Explicit printing with qout in functions",
+        source: "\
+qout assign 42
+qout assign 1 2 3
+qout assign 'hello'
+A assign 10
+qout assign A + 5
+del R assign SHOW X
+R assign X
+qout assign 'value:'
+qout assign X
+del
+SHOW 7
 ",
     },
     Demo {
@@ -316,10 +432,10 @@ _3 + 10
         source: "\
 'MMIO' qsvo 242
 MMIO[0]
-MMIO[0] <- 1
+MMIO[0] assign 1
 MMIO[0]
 MMIO[257]
-MMIO[0] <- 0
+MMIO[0] assign 0
 MMIO[0]
 ",
     },
@@ -338,8 +454,8 @@ rho 5 rho '#'
         name: "System Commands",
         description: "Workspace management with )VARS and )CLEAR",
         source: "\
-A <- 5
-B <- 10
+A assign 5
+B assign 10
 )VARS
 A + B
 )CLEAR
@@ -350,7 +466,7 @@ A + B
         name: "Take & Drop",
         description: "Select elements from the front or end",
         source: "\
-A <- iota 10
+A assign iota 10
 3 take A
 _3 take A
 2 drop A
@@ -362,8 +478,8 @@ _2 drop A
         name: "User-Defined Functions",
         description: "Define and call functions with del",
         source: "\
-del R <- DOUBLE X
-R <- X + X
+del R assign DOUBLE X
+R assign X + X
 del
 DOUBLE 7
 DOUBLE iota 4
@@ -373,9 +489,9 @@ DOUBLE iota 4
         name: "Variables",
         description: "Assignment and variable use",
         source: "\
-A <- 5
+A assign 5
 A + 3
-B <- A * 2
+B assign A * 2
 B
 A + B
 )VARS

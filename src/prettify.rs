@@ -154,7 +154,7 @@ pub const KEYWORDS: &[KeywordEntry] = &[
     },
     KeywordEntry {
         ascii: "qout",
-        glyph: "\u{2395}\u{2190}", // ⎕←
+        glyph: "\u{2395}", // ⎕ (quad — assign ← is separate)
         literate_monadic: "print",
         literate_dyadic: None,
     },
@@ -162,6 +162,30 @@ pub const KEYWORDS: &[KeywordEntry] = &[
         ascii: "qrl",
         glyph: "\u{2395}RL", // ⎕RL
         literate_monadic: "random-link",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "qio",
+        glyph: "\u{2395}IO", // ⎕IO
+        literate_monadic: "index-origin",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "qdl",
+        glyph: "\u{2395}DL", // ⎕DL
+        literate_monadic: "delay",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "assign",
+        glyph: "\u{2190}", // ←
+        literate_monadic: "assign",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "comment",
+        glyph: "\u{235D}", // ⍝
+        literate_monadic: "comment",
         literate_dyadic: None,
     },
 ];
@@ -309,7 +333,7 @@ struct GlyphEntry {
     glyph: &'static str,
     ascii: &'static str,
     /// If true, insert spaces around the replacement when adjacent to alphanumerics.
-    /// Needed for multi-char alphabetic keywords (rho, iota) but not for operators (<-, *).
+    /// Needed for multi-char alphabetic keywords (rho, iota, assign) but not for operators (*, /).
     pad: bool,
 }
 
@@ -337,9 +361,19 @@ const GLYPH_MAP: &[GlyphEntry] = &[
         pad: true,
     }, // ⎕RL random link
     GlyphEntry {
+        glyph: "\u{2395}IO",
+        ascii: "qio",
+        pad: true,
+    }, // ⎕IO index origin
+    GlyphEntry {
+        glyph: "\u{2395}DL",
+        ascii: "qdl",
+        pad: true,
+    }, // ⎕DL delay
+    GlyphEntry {
         glyph: "\u{2395}\u{2190}",
-        ascii: "qout <-",
-        pad: false,
+        ascii: "qout assign",
+        pad: true,
     }, // ⎕← quad output
     // Single-char APL glyphs → keywords
     GlyphEntry {
@@ -415,9 +449,9 @@ const GLYPH_MAP: &[GlyphEntry] = &[
     }, // ⍕ format
     GlyphEntry {
         glyph: "\u{235D}",
-        ascii: "#",
-        pad: false,
-    }, // ⍝ comment → #
+        ascii: "comment",
+        pad: true,
+    }, // ⍝ comment
     GlyphEntry {
         glyph: "?",
         ascii: "roll",
@@ -426,8 +460,8 @@ const GLYPH_MAP: &[GlyphEntry] = &[
     // Non-keyword APL characters → ASCII operators (no padding needed)
     GlyphEntry {
         glyph: "\u{2190}",
-        ascii: "<-",
-        pad: false,
+        ascii: "assign",
+        pad: true,
     }, // ← assignment
     GlyphEntry {
         glyph: "\u{00D7}",
@@ -450,7 +484,7 @@ const GLYPH_MAP: &[GlyphEntry] = &[
 ///
 /// Converts a real APL source file (e.g. from GNU APL) into our ASCII dialect.
 /// Single-char glyphs like `⍴` become keywords like `rho` with space padding
-/// to ensure proper word boundaries. Operator characters like `←` become `<-`.
+/// to ensure proper word boundaries. Characters like `←` become `assign`.
 pub fn translate_glyph_to_ascii(input: &str) -> String {
     let mut result = String::with_capacity(input.len());
     let chars: Vec<char> = input.chars().collect();

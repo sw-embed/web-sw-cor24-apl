@@ -201,17 +201,17 @@ impl HelpOverlay {
                         <td>{"reduce: sum, difference, product"}</td></tr>
 
                     <tr class="help-section"><td colspan="2">{"Variables & Indexing"}</td></tr>
-                    <tr><td class="help-key">{"NAME \u{2190} expr"}</td>
+                    <tr><td class="help-key">{"NAME assign expr"}</td>
                         <td>{"assign (NAME must be uppercase)"}</td></tr>
                     <tr><td class="help-key">{"V[N]"}</td>
                         <td>{"bracket index"}</td></tr>
-                    <tr><td class="help-key">{"V[N] \u{2190} expr"}</td>
+                    <tr><td class="help-key">{"V[N] assign expr"}</td>
                         <td>{"indexed assign"}</td></tr>
 
                     <tr class="help-section"><td colspan="2">{"Output"}</td></tr>
-                    <tr><td class="help-key">{"[] \u{2190} expr"}</td>
+                    <tr><td class="help-key">{"[] assign expr"}</td>
                         <td>{"print to output (line entry)"}</td></tr>
-                    <tr><td class="help-key">{"qout \u{2190} expr"}</td>
+                    <tr><td class="help-key">{"qout assign expr"}</td>
                         <td>{"print to output (in functions)"}</td></tr>
 
                     <tr class="help-section"><td colspan="2">{"System Commands"}</td></tr>
@@ -225,8 +225,10 @@ impl HelpOverlay {
                     <tr class="help-section"><td colspan="2">{"Syntax Notes"}</td></tr>
                     <tr><td class="help-key">{"_N"}</td>
                         <td>{"negative literal (e.g. _3 = \u{207b}3)"}</td></tr>
-                    <tr><td class="help-key">{"<-"}</td>
-                        <td>{"assignment arrow (\u{2190})"}</td></tr>
+                    <tr><td class="help-key">{"assign"}</td>
+                        <td>{"assignment keyword (\u{2190})"}</td></tr>
+                    <tr><td class="help-key">{"comment"}</td>
+                        <td>{"line comment (\u{235D}) — full-line or inline"}</td></tr>
                     <tr><td colspan="2" class="help-note">
                         {"Evaluation is right-to-left; use parens to override."}
                     </td></tr>
@@ -266,10 +268,10 @@ impl HelpOverlay {
                 )}
                 { Self::tutorial_section(
                     "2. Variables",
-                    "Assign with <- (\u{2190}). Variable names must be UPPERCASE. \
+                    "Assign with the assign keyword (\u{2190}). Variable names must be UPPERCASE. \
                      )VARS lists defined variables; )CLEAR resets the workspace.",
                     &[
-                        ("X <- 42", ""),
+                        ("X assign 42", ""),
                         ("X", "42"),
                         ("X + 8", "50"),
                         (")VARS", "X"),
@@ -327,12 +329,12 @@ impl HelpOverlay {
                 { Self::tutorial_section(
                     "8. Bracket Indexing",
                     "Square brackets select or update elements. \
-                     Indices start at 1 (\u{2395}IO\u{2190}1).",
+                     Indices start at 1 (qio defaults to 1).",
                     &[
-                        ("V <- 10 20 30 40 50", ""),
+                        ("V assign 10 20 30 40 50", ""),
                         ("V[3]", "30"),
                         ("V[2 4]", "20 40"),
-                        ("V[1] <- 99", ""),
+                        ("V[1] assign 99", ""),
                         ("V", "99 20 30 40 50"),
                     ],
                 )}
@@ -340,7 +342,7 @@ impl HelpOverlay {
                     "9. Matrices",
                     "Reshape (rho / \u{2374}) creates matrices. Arithmetic is element-wise.",
                     &[
-                        ("M <- 2 3 rho 1 2 3 4 5 6", ""),
+                        ("M assign 2 3 rho 1 2 3 4 5 6", ""),
                         ("M + 10", "11 12 13 / 14 15 16"),
                         ("rho M", "2 3"),
                     ],
@@ -348,11 +350,11 @@ impl HelpOverlay {
                 { Self::tutorial_section(
                     "10. Comparison Operators",
                     "Comparisons return 1 (true) or 0 (false), element-wise. \
-                     Not-equal is <>.",
+                     Not-equal is !=.",
                     &[
                         ("3 > 2", "1"),
                         ("1 2 3 4 5 >= 3", "0 0 1 1 1"),
-                        ("5 <> 5", "0"),
+                        ("5 != 5", "0"),
                     ],
                 )}
                 { Self::tutorial_section(
@@ -360,8 +362,8 @@ impl HelpOverlay {
                     "Labels mark jump targets. Type goto (displays as \u{2192}). \
                      Conditional branch: expression evaluates to label or empty.",
                     &[
-                        ("[1]  X <- 1", ""),
-                        ("[2]  LOOP: X <- X + 1", ""),
+                        ("[1]  X assign 1", ""),
+                        ("[2]  LOOP: X assign X + 1", ""),
                         ("[3]  goto (X < 5) / 'LOOP'", ""),
                         ("[4]  X", "5"),
                     ],
@@ -381,9 +383,9 @@ impl HelpOverlay {
                     "13. Multiline Programs",
                     "Enter lines with [N] prefix. Run with )RUN, review with )LIST.",
                     &[
-                        ("[1]  [] <- 'HELLO'", ""),
-                        ("[2]  [] <- 2 + 2", ""),
-                        (")LIST", "[1] []\u{2190}'HELLO' / [2] []\u{2190}2+2"),
+                        ("[1]  [] assign 'HELLO'", ""),
+                        ("[2]  [] assign 2 + 2", ""),
+                        (")LIST", "[1] [] assign 'HELLO' / [2] [] assign 2+2"),
                         (")RUN", "HELLO / 4"),
                     ],
                 )}
@@ -392,8 +394,8 @@ impl HelpOverlay {
                     "Define functions with del (\u{2207} nabla). \
                      The header names the function and its parameters.",
                     &[
-                        ("del R <- DOUBLE X", ""),
-                        ("[1]  R <- 2 * X", ""),
+                        ("del R assign DOUBLE X", ""),
+                        ("[1]  R assign 2 * X", ""),
                         ("del", "(closes definition)"),
                         ("DOUBLE 21", "42"),
                     ],
@@ -403,7 +405,7 @@ impl HelpOverlay {
                     "Quad-variables map to COR24 hardware. \
                      Type qled (\u{2395}LED) for the D2 LED; qsw (\u{2395}SW) for the switch.",
                     &[
-                        ("qled <- 1", "turn on the D2 LED"),
+                        ("qled assign 1", "turn on the D2 LED"),
                         ("qsw", "read switch (0 or 1)"),
                     ],
                 )}
@@ -413,7 +415,7 @@ impl HelpOverlay {
                      AP 242 provides memory-mapped I/O.",
                     &[
                         ("'X' qsvo 242", "couple X to AP 242"),
-                        ("X <- 100", "write 100 to MMIO"),
+                        ("X assign 100", "write 100 to MMIO"),
                         ("X", "read from MMIO"),
                     ],
                 )}
@@ -432,18 +434,31 @@ impl HelpOverlay {
                     "Type pick (\u{2283}) to index into nested arrays. \
                      Type roll (?) for random integers. \
                      Type fmt (\u{2355}) to convert numbers to strings. \
-                     Type qout (\u{2395}\u{2190}) for explicit output in functions.",
+                     Type qout (\u{2395}) for explicit output in functions.",
                     &[
-                        ("NAMES <- 'hi' 'bye'", ""),
+                        ("NAMES assign 'hi' 'bye'", ""),
                         ("0 pick NAMES", "hi  (first element)"),
                         ("roll 6", "(random 1\u{2013}6)"),
                         ("roll 4 rho 6", "(4 random 1\u{2013}6)"),
                         ("fmt 42", "'42'  (number \u{2192} string)"),
-                        ("qout <- 'hello'", "hello  (explicit print)"),
+                        ("qout assign 'hello'", "hello  (explicit print)"),
                     ],
                 )}
                 { Self::tutorial_section(
-                    "19. Edge Cases & Errors",
+                    "19. Comments & Delay",
+                    "Type comment (\u{235D}) for line comments (full-line or inline). \
+                     Type qdl (\u{2395}DL) to pause for N milliseconds. \
+                     Type qio (\u{2395}IO) to set index origin (default 1).",
+                    &[
+                        ("comment this is a comment", "(ignored)"),
+                        ("A assign 5 comment inline", "5"),
+                        ("qdl 100", "(pause 100ms)"),
+                        ("qio assign 0", "(zero-based indexing)"),
+                        ("iota 5", "0 1 2 3 4"),
+                    ],
+                )}
+                { Self::tutorial_section(
+                    "20. Edge Cases & Errors",
                     "APL reports errors clearly. Empty vectors are valid. \
                      Division by zero and domain errors are caught.",
                     &[

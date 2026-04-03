@@ -28,6 +28,10 @@ const GLYPH_MAP: &[GlyphEntry] = &[
     GlyphEntry { glyph: "\u{2395}SVO", ascii: "qsvo", pad: true },
     GlyphEntry { glyph: "\u{2395}LED", ascii: "qled", pad: true },
     GlyphEntry { glyph: "\u{2395}SW",  ascii: "qsw",  pad: true },
+    GlyphEntry { glyph: "\u{2395}RL",  ascii: "qrl",  pad: true },
+    GlyphEntry { glyph: "\u{2395}IO",  ascii: "qio",  pad: true },
+    GlyphEntry { glyph: "\u{2395}DL",  ascii: "qdl",  pad: true },
+    GlyphEntry { glyph: "\u{2395}\u{2190}", ascii: "qout assign", pad: true }, // ⎕←
     // Single-char APL glyphs → keywords
     GlyphEntry { glyph: "\u{2374}", ascii: "rho",      pad: true },  // ⍴
     GlyphEntry { glyph: "\u{2373}", ascii: "iota",     pad: true },  // ⍳
@@ -42,8 +46,12 @@ const GLYPH_MAP: &[GlyphEntry] = &[
     GlyphEntry { glyph: "\u{230A}", ascii: "floor",    pad: true },  // ⌊
     GlyphEntry { glyph: "\u{2207}", ascii: "del",      pad: true },  // ∇
     GlyphEntry { glyph: "\u{002C}", ascii: "cat",      pad: true },  // , (catenate)
-    // Non-keyword APL characters → ASCII operators
-    GlyphEntry { glyph: "\u{2190}", ascii: "<-", pad: false },  // ← assignment
+    GlyphEntry { glyph: "\u{2283}", ascii: "pick",     pad: true },  // ⊃
+    GlyphEntry { glyph: "\u{2355}", ascii: "fmt",      pad: true },  // ⍕
+    GlyphEntry { glyph: "\u{235D}", ascii: "comment",  pad: true },  // ⍝
+    GlyphEntry { glyph: "?",        ascii: "roll",     pad: true },  // ?
+    // Non-keyword APL characters → ASCII keywords/operators
+    GlyphEntry { glyph: "\u{2190}", ascii: "assign", pad: true },  // ← assignment
     GlyphEntry { glyph: "\u{00D7}", ascii: "*",  pad: false },  // × multiply
     GlyphEntry { glyph: "\u{00F7}", ascii: "/",  pad: false },  // ÷ divide
     GlyphEntry { glyph: "\u{00AF}", ascii: "_",  pad: false },  // ¯ high minus
@@ -59,16 +67,25 @@ struct KeywordEntry {
 const KEYWORD_MAP: &[KeywordEntry] = &[
     // Longest first to avoid partial matches
     KeywordEntry { ascii: "compress", glyph: "/" },
+    KeywordEntry { ascii: "comment",  glyph: "\u{235D}" }, // ⍝
+    KeywordEntry { ascii: "assign",   glyph: "\u{2190}" }, // ←
     KeywordEntry { ascii: "floor",    glyph: "\u{230A}" }, // ⌊
     KeywordEntry { ascii: "ceil",     glyph: "\u{2308}" }, // ⌈
     KeywordEntry { ascii: "goto",     glyph: "\u{2192}" }, // →
     KeywordEntry { ascii: "iota",     glyph: "\u{2373}" }, // ⍳
     KeywordEntry { ascii: "take",     glyph: "\u{2191}" }, // ↑
     KeywordEntry { ascii: "drop",     glyph: "\u{2193}" }, // ↓
+    KeywordEntry { ascii: "pick",     glyph: "\u{2283}" }, // ⊃
+    KeywordEntry { ascii: "roll",     glyph: "?" },
     KeywordEntry { ascii: "qsvo",     glyph: "\u{2395}SVO" },
     KeywordEntry { ascii: "qled",     glyph: "\u{2395}LED" },
+    KeywordEntry { ascii: "qout",     glyph: "\u{2395}" }, // ⎕
+    KeywordEntry { ascii: "qrl",      glyph: "\u{2395}RL" },
+    KeywordEntry { ascii: "qio",      glyph: "\u{2395}IO" },
+    KeywordEntry { ascii: "qdl",      glyph: "\u{2395}DL" },
     KeywordEntry { ascii: "rho",      glyph: "\u{2374}" }, // ⍴
     KeywordEntry { ascii: "rev",      glyph: "\u{233D}" }, // ⌽
+    KeywordEntry { ascii: "fmt",      glyph: "\u{2355}" }, // ⍕
     KeywordEntry { ascii: "cat",      glyph: "," },
     KeywordEntry { ascii: "and",      glyph: "\u{2227}" }, // ∧
     KeywordEntry { ascii: "not",      glyph: "\u{223C}" }, // ∼
@@ -77,10 +94,8 @@ const KEYWORD_MAP: &[KeywordEntry] = &[
     KeywordEntry { ascii: "or",       glyph: "\u{2228}" }, // ∨
 ];
 
-/// Also convert ASCII operators back to APL glyphs.
-const OPERATOR_MAP: &[(&str, &str)] = &[
-    ("<-", "\u{2190}"), // ← assignment
-];
+/// No multi-char operator conversions needed — assign is now a keyword.
+const OPERATOR_MAP: &[(&str, &str)] = &[];
 
 fn glyph_to_ascii(input: &str) -> String {
     let chars: Vec<char> = input.chars().collect();
@@ -125,7 +140,7 @@ fn glyph_to_ascii(input: &str) -> String {
 fn ascii_to_glyph(input: &str) -> String {
     let mut result = String::with_capacity(input.len());
 
-    // First pass: convert multi-char operators like <- to ←
+    // First pass: convert multi-char operators (if any) to glyphs
     let mut intermediate = String::with_capacity(input.len());
     let mut chars = input.chars().peekable();
     while let Some(c) = chars.next() {
