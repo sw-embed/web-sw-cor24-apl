@@ -228,7 +228,7 @@ comment
 del R assign SHOW;I
 R assign 0
 I assign 1
-LP: quad assign (I pick NAMES) cat ':' cat ((I pick POS) floor 20) rho '#')
+LP: quad assign (I pick NAMES) cat ':' cat (((I pick POS) floor 20) rho '#')
 I assign I + 1
 goto (I <= NH)/LP
 del
@@ -238,7 +238,7 @@ POS assign NH rho 0
 RND assign 0
 quad assign 'THE RACE IS ON!'
 NXT: RND assign RND + 1
-quad assign '--- Round ' cat fmt RND cat ' ---'
+quad assign '--- Round ' cat (fmt RND) cat ' ---'
 POS assign POS + roll NH rho 3
 SHOW
 goto (or/ POS >= FINISH)/DONE
