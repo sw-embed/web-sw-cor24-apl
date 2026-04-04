@@ -211,12 +211,15 @@ rho fmt 1 2 3
 ",
     },
     Demo {
-        name: "Horse Race",
-        description: "5 named horses — translated from GNU APL original",
+        name: "Horse Race A",
+        description: "Verbose race: 5 horses, round counter, capped track display",
         source: "\
-comment Horse Race -- from sw-comp-history/apl-horse-race
-comment RACE calls SHOW (niladic, uses globals via dynamic scope)
-comment Type RACE to run again (results vary each time)
+comment Horse Race A -- verbose version (from race.apl)
+comment 5 named horses race to FINISH line with track visualization.
+comment RACE defines POS and RND as locals, calls niladic SHOW which
+comment   reads POS through dynamic scoping. Track length capped at 20.
+comment Winner is horse with highest position when any horse finishes.
+comment Type RACE to run again (PRNG state changes each run).
 quad-seed assign 7
 NH assign 5
 FINISH assign 15
@@ -247,11 +250,14 @@ RACE
 ",
     },
     Demo {
-        name: "Horse Race (Idiomatic)",
-        description: "Compact APL horse race — translated from GNU APL",
+        name: "Horse Race B",
+        description: "Idiomatic race: compact APL, minimal code",
         source: "\
-comment Idiomatic Horse Race -- from sw-comp-history/apl-horse-race
-comment Compact version: RACE calls SHOW (niladic)
+comment Horse Race B -- idiomatic version (from idiomatic-race.apl)
+comment Same 5 horses, but compact APL style: no round counter, no
+comment   track cap, fewer lines. RACE calls niladic SHOW. POS is
+comment   local to RACE, visible to SHOW via dynamic scope.
+comment Type RACE to run again.
 quad-seed assign 7
 NAMES assign 'Lucky  ' 'Thunder' 'Shadow ' 'Comet  ' 'Blaze  '
 NH assign 5
