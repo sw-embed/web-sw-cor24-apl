@@ -212,50 +212,69 @@ rho fmt 1 2 3
     },
     Demo {
         name: "Horse Race",
-        description: "4 named horses race with track visualization",
+        description: "5 named horses — translated from GNU APL original",
         source: "\
-comment Horse Race -- type RACE to run again with new results
-quad-origin assign 0
-quad-seed assign 7
-NH assign 4
-GOAL assign 15
-POS assign NH rho 0
-RND assign 0
-NAMES assign 'Thunder' 'Stormy ' 'Blazer ' 'Shadow '
-comment
-del R assign SHOW X
-R assign 0
-I assign 0
-LP: R assign (I pick NAMES) cat ':' cat (X[I] rho '#')
-quad assign R
-I assign I + 1
-goto (I < NH)/LP
-del
-comment
-del R assign RACE
-R assign 0
-POS assign NH rho 0
-RND assign 0
-NEXT: RND assign RND + 1
-quad assign '=== Round ' cat fmt RND
-POS assign POS + roll NH rho 3
-SHOW POS
-LEAD assign ceil/ POS
-quad assign 'Leader at ' cat fmt LEAD
-DONE assign or/ POS >= GOAL
-goto (DONE = 0)/NEXT
-WIN assign (POS = LEAD) compress iota NH
-NW assign rho WIN
-quad assign 'Race over!'
-goto (NW > 1)/TIE
-quad assign 'Winner: ' cat ((0 pick WIN) pick NAMES) cat ' at ' cat fmt LEAD
-goto 0
-TIE: quad assign (fmt NW) cat '-way tie at ' cat fmt LEAD
-del
-comment
-quad assign '*** HORSE RACE ***'
-Z assign RACE
+comment Horse Race -- from sw-comp-history/apl-horse-race
+comment RACE calls SHOW (niladic, uses globals via dynamic scope)
 comment Type RACE to run again (results vary each time)
+quad-seed assign 7
+NH assign 5
+FINISH assign 15
+NAMES assign 'Lucky  ' 'Thunder' 'Shadow ' 'Comet  ' 'Blaze  '
+comment
+del R assign SHOW;I
+R assign 0
+I assign 1
+LP: quad assign (I pick NAMES) cat ':' cat ((I pick POS) floor 20) rho '#')
+I assign I + 1
+goto (I <= NH)/LP
+del
+comment
+del R assign RACE;POS;RND
+POS assign NH rho 0
+RND assign 0
+quad assign 'THE RACE IS ON!'
+NXT: RND assign RND + 1
+quad assign '--- Round ' cat fmt RND cat ' ---'
+POS assign POS + roll NH rho 3
+SHOW
+goto (or/ POS >= FINISH)/DONE
+goto NXT
+DONE: quad assign 'WINNER: ' cat ((1 pick (POS = ceil/ POS) compress iota NH) pick NAMES)
+del
+comment
+RACE
+",
+    },
+    Demo {
+        name: "Horse Race (Idiomatic)",
+        description: "Compact APL horse race — translated from GNU APL",
+        source: "\
+comment Idiomatic Horse Race -- from sw-comp-history/apl-horse-race
+comment Compact version: RACE calls SHOW (niladic)
+quad-seed assign 7
+NAMES assign 'Lucky  ' 'Thunder' 'Shadow ' 'Comet  ' 'Blaze  '
+NH assign 5
+comment
+del R assign SHOW;I
+R assign 0
+I assign 1
+N: quad assign (I pick NAMES) cat ':' cat ((I pick POS) rho '#')
+I assign I + 1
+goto (I <= NH)/N
+del
+comment
+del R assign RACE;POS
+POS assign NH rho 0
+quad assign 'THE RACE IS ON!'
+L: POS assign POS + roll NH rho 3
+SHOW
+quad assign ''
+goto (0 = or/ POS >= 15)/L
+quad assign 'WINNER: ' cat (1 pick (POS = ceil/ POS) compress iota NH) pick NAMES
+del
+comment
+RACE
 ",
     },
     Demo {
