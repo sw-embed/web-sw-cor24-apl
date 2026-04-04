@@ -10,6 +10,26 @@ pub struct Demo {
 /// Each line is sent to the interpreter via UART as if the user typed it.
 pub const DEMOS: &[Demo] = &[
     Demo {
+        name: "Abs & Residue",
+        description: "Absolute value and modulo operators",
+        source: "\
+comment abs (absolute value) and residue (modulo)
+comment monadic abs
+quad assign abs _5
+quad assign abs 3
+quad assign abs 0
+quad assign abs _1 2 _3 4
+comment dyadic residue: A residue B = B mod A
+quad assign 3 residue 7
+quad assign 5 residue 13
+quad assign 4 residue 12
+quad assign 3 residue _7
+comment scalar extension
+quad assign 10 residue 23 45 67
+quad assign 2 residue iota 8
+",
+    },
+    Demo {
         name: "Bitwise Operations",
         description: "Bitwise and, or, not on integers",
         source: "\
@@ -218,7 +238,7 @@ goto (I < NH)/SHOW
 del
 comment
 comment Main race function
-del R assign RACE X
+del R assign RACE
 R assign 0
 NEXT: RND assign RND + 1
 quad assign '=== Round ' cat fmt RND
@@ -238,7 +258,7 @@ TIE: quad assign (fmt NW) cat '-way tie!'
 del
 comment
 quad assign '*** HORSE RACE ***'
-Z assign RACE 0
+Z assign RACE
 )OFF
 ",
     },
@@ -257,7 +277,7 @@ GOAL assign 10
 POS assign NH rho 0
 RND assign 0
 comment
-del R assign RACE X
+del R assign RACE
 R assign 0
 NEXT: RND assign RND + 1
 quad assign 'Round ' cat fmt RND
@@ -270,10 +290,33 @@ quad assign 'Winner: horse ' cat fmt (1 + 0 pick WIN)
 del
 comment
 quad assign '--- Horse Race ---'
-Z assign RACE 0
+Z assign RACE
 quad assign 'Final positions:'
 quad assign POS
 )OFF
+",
+    },
+    Demo {
+        name: "Index-Of & Member",
+        description: "Dyadic iota (index-of) and membership test",
+        source: "\
+comment dyadic iota (index-of): A iota B -> position of B in A
+quad assign 10 20 30 iota 20
+quad assign 10 20 30 iota 40
+quad assign 10 20 30 iota 10 30
+comment with 0-origin
+quad-origin assign 0
+quad assign 10 20 30 iota 20
+quad assign 10 20 30 iota 40
+quad-origin assign 1
+comment monadic iota still works
+quad assign iota 5
+comment member: A member B -> 1 where A elements in B
+quad assign 1 2 3 4 member 2 4 6
+quad assign 5 member 1 2 3 4 5
+quad assign 5 member 1 2 3
+comment character member
+quad assign 'hello' member 'aeiou'
 ",
     },
     Demo {
@@ -297,6 +340,30 @@ comment No WS FULL even with huge arguments
 rho iota 999999
 5 take iota 999999
 5 take 5 drop iota 999999
+",
+    },
+    Demo {
+        name: "Local Variables",
+        description: "Function-local scope with ;VAR syntax",
+        source: "\
+comment Local variables in functions (;VAR syntax)
+comment Local does not pollute global scope
+G assign 99
+del R assign TEST X;L
+L assign X * 2
+R assign L + 1
+del
+quad assign TEST 5
+quad assign G
+comment G is still 99
+comment Multiple locals
+del R assign MULTI X;A;B;C
+A assign X + 1
+B assign X + 2
+C assign A * B
+R assign C
+del
+quad assign MULTI 3
 ",
     },
     Demo {
@@ -346,6 +413,28 @@ A assign 'hello' 'world'
 A
 rho A
 'one' 'two' 'three' 'four'
+",
+    },
+    Demo {
+        name: "Niladic Functions",
+        description: "Zero-argument user-defined functions",
+        source: "\
+comment Niladic function test
+del R assign HELLO
+R assign 42
+del
+quad assign HELLO
+comment Niladic with quad output inside
+del R assign GREET
+quad assign 'hello world'
+R assign 0
+del
+quad assign GREET
+comment Monadic still works
+del R assign DOUBLE X
+R assign X + X
+del
+quad assign DOUBLE 5
 ",
     },
     Demo {
@@ -463,6 +552,29 @@ MMIO[0]
 MMIO[257]
 MMIO[0] assign 0
 MMIO[0]
+",
+    },
+    Demo {
+        name: "Signum, Factorial & Binomial",
+        description: "Sign function, n!, and C(n,k) combinations",
+        source: "\
+comment monadic signum: _1, 0, or 1
+quad assign signum _5
+quad assign signum 0
+quad assign signum 7
+quad assign signum _3 0 4 _1
+comment monadic factorial
+quad assign factorial 0
+quad assign factorial 1
+quad assign factorial 5
+quad assign factorial 7
+comment dyadic binomial: K binomial N = C(N,K)
+quad assign 2 binomial 5
+quad assign 0 binomial 7
+quad assign 3 binomial 3
+quad assign 1 binomial 10
+comment scalar extension
+quad assign 2 binomial 3 4 5 6
 ",
     },
     Demo {

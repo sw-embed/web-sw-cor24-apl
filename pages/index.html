@@ -6,8 +6,8 @@
     <title>APL — COR24 Environment</title>
     
 <script type="module">
-import init, * as bindings from '/web-sw-cor24-apl/web-sw-cor24-apl-5efa93c5ef5ebbfd.js';
-const wasm = await init({ module_or_path: '/web-sw-cor24-apl/web-sw-cor24-apl-5efa93c5ef5ebbfd_bg.wasm' });
+import init, * as bindings from '/web-sw-cor24-apl/web-sw-cor24-apl-578c98855a1899f5.js';
+const wasm = await init({ module_or_path: '/web-sw-cor24-apl/web-sw-cor24-apl-578c98855a1899f5_bg.wasm' });
 
 
 window.wasmBindings = bindings;
@@ -125,7 +125,7 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
             40%, 80% { transform: rotate(10deg); }
         }
     </style>
-<link rel="modulepreload" href="/web-sw-cor24-apl/web-sw-cor24-apl-5efa93c5ef5ebbfd.js" crossorigin="anonymous" integrity="sha384-YVEeI/QWwwCohbEFWV6y09kFOVlNS612EGozcgjI1ywmchtj7gCuVW8nWBJkeUR/"><link rel="preload" href="/web-sw-cor24-apl/web-sw-cor24-apl-5efa93c5ef5ebbfd_bg.wasm" crossorigin="anonymous" integrity="sha384-T1+p2vBGfDfroHnfbkT89hRipOk5hIjmfpSy52y2nZQ+jOA1/ie6LSlvHeDquuFC" as="fetch" type="application/wasm"></head>
+<link rel="modulepreload" href="/web-sw-cor24-apl/web-sw-cor24-apl-578c98855a1899f5.js" crossorigin="anonymous" integrity="sha384-YVEeI/QWwwCohbEFWV6y09kFOVlNS612EGozcgjI1ywmchtj7gCuVW8nWBJkeUR/"><link rel="preload" href="/web-sw-cor24-apl/web-sw-cor24-apl-578c98855a1899f5_bg.wasm" crossorigin="anonymous" integrity="sha384-W9urYcweOlFkArG4ABvOT6ozlWQKck+PLzO56da1vzTmctq99AWKzXeLT/08XvPU" as="fetch" type="application/wasm"></head>
 <body>
     <div id="app"></div>
 </body>

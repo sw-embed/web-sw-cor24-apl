@@ -460,16 +460,42 @@ impl HelpOverlay {
                     "20. Set Operations",
                     "Type cup (\u{222A}) for unique/union. \
                      Type cap (\u{2229}) for intersection. \
-                     Works on integers and characters.",
+                     Dyadic iota does index-of. Type member (\u{2208}) for membership.",
                     &[
                         ("cup 1 2 3 2 1 4", "1 2 3 4  (unique)"),
                         ("1 2 3 cup 3 4 5", "1 2 3 4 5  (union)"),
                         ("1 2 3 4 cap 2 4 6", "2 4  (intersection)"),
-                        ("cup 'mississippi'", "misp  (unique chars)"),
+                        ("10 20 30 iota 20", "2  (index-of)"),
+                        ("1 2 3 member 2 4 6", "0 1 0  (membership)"),
                     ],
                 )}
                 { Self::tutorial_section(
-                    "21. Edge Cases & Errors",
+                    "21. Math Functions",
+                    "Type abs (|) for absolute value, residue (|) for modulo. \
+                     Type signum (\u{00D7}) for sign. \
+                     Type factorial (!) for n!, binomial (!) for C(n,k).",
+                    &[
+                        ("abs _5", "5"),
+                        ("3 residue 7", "1  (7 mod 3)"),
+                        ("signum _3 0 4", "_1 0 1"),
+                        ("factorial 5", "120"),
+                        ("2 binomial 5", "10  (C(5,2))"),
+                    ],
+                )}
+                { Self::tutorial_section(
+                    "22. Niladic Functions & Local Variables",
+                    "Functions can take zero arguments (niladic). \
+                     Use semicolons in the header for local variables.",
+                    &[
+                        ("del R assign HELLO", "(niladic — no X)"),
+                        ("R assign 42", ""),
+                        ("del", ""),
+                        ("HELLO", "42"),
+                        ("del R assign F X;L", "(L is local)"),
+                    ],
+                )}
+                { Self::tutorial_section(
+                    "23. Edge Cases & Errors",
                     "APL reports errors clearly. Empty vectors are valid. \
                      Division by zero and domain errors are caught.",
                     &[

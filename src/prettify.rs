@@ -42,7 +42,7 @@ pub const KEYWORDS: &[KeywordEntry] = &[
         ascii: "iota",
         glyph: "\u{2373}", // ⍳
         literate_monadic: "index-gen",
-        literate_dyadic: None,
+        literate_dyadic: Some("index-of"),
     },
     KeywordEntry {
         ascii: "take",
@@ -152,6 +152,42 @@ pub const KEYWORDS: &[KeywordEntry] = &[
         literate_monadic: "format",
         literate_dyadic: None,
     },
+    KeywordEntry {
+        ascii: "abs",
+        glyph: "|",
+        literate_monadic: "absolute-value",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "residue",
+        glyph: "|",
+        literate_monadic: "modulo",
+        literate_dyadic: Some("modulo"),
+    },
+    KeywordEntry {
+        ascii: "signum",
+        glyph: "\u{00D7}", // × (monadic × = signum)
+        literate_monadic: "sign",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "factorial",
+        glyph: "!",
+        literate_monadic: "factorial",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "binomial",
+        glyph: "!",
+        literate_monadic: "combinations",
+        literate_dyadic: Some("combinations"),
+    },
+    KeywordEntry {
+        ascii: "member",
+        glyph: "\u{2208}", // ∈
+        literate_monadic: "membership",
+        literate_dyadic: Some("membership"),
+    },
     // Hyphenated quad-* keywords must precede `quad` for longest-match-first.
     KeywordEntry {
         ascii: "quad-origin",
@@ -230,6 +266,16 @@ pub fn prettify_line(line: &str, mode: DisplayMode) -> Vec<Segment> {
                 segments.push(Segment::Keyword(replacement));
                 i = end;
                 plain_start = i;
+
+                // After `comment`, the rest of the line is comment text —
+                // preserve it literally, no further keyword matching.
+                if entry.ascii == "comment" {
+                    if plain_start < bytes.len() {
+                        segments.push(Segment::Plain(line[plain_start..].to_string()));
+                    }
+                    return segments;
+                }
+
                 continue;
             }
         }
@@ -448,10 +494,25 @@ const GLYPH_MAP: &[GlyphEntry] = &[
         pad: true,
     }, // ∩ intersection
     GlyphEntry {
+        glyph: "\u{2208}",
+        ascii: "member",
+        pad: true,
+    }, // ∈ membership
+    GlyphEntry {
         glyph: "?",
         ascii: "roll",
         pad: true,
     }, // ? roll (monadic random)
+    GlyphEntry {
+        glyph: "!",
+        ascii: "factorial",
+        pad: true,
+    }, // ! factorial/binomial
+    GlyphEntry {
+        glyph: "|",
+        ascii: "abs",
+        pad: true,
+    }, // | absolute value/residue
     // Non-keyword APL characters → ASCII operators (no padding needed)
     GlyphEntry {
         glyph: "\u{2190}",

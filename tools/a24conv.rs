@@ -49,7 +49,10 @@ const GLYPH_MAP: &[GlyphEntry] = &[
     GlyphEntry { glyph: "\u{235D}", ascii: "comment",  pad: true },  // ⍝
     GlyphEntry { glyph: "\u{222A}", ascii: "cup",      pad: true },  // ∪ unique/union
     GlyphEntry { glyph: "\u{2229}", ascii: "cap",      pad: true },  // ∩ intersection
+    GlyphEntry { glyph: "\u{2208}", ascii: "member",   pad: true },  // ∈ membership
     GlyphEntry { glyph: "?",        ascii: "roll",     pad: true },  // ?
+    GlyphEntry { glyph: "!",        ascii: "factorial", pad: true },  // ! factorial/binomial
+    GlyphEntry { glyph: "|",        ascii: "abs",      pad: true },  // | abs/residue
     // Non-keyword APL characters → ASCII operators
     GlyphEntry { glyph: "\u{2190}", ascii: "assign", pad: true },  // ← assignment
     GlyphEntry { glyph: "\u{00D7}", ascii: "*",  pad: false },  // × multiply
@@ -68,8 +71,13 @@ const KEYWORD_MAP: &[KeywordEntry] = &[
     // Longest first to avoid partial matches (hyphenated before plain)
     KeywordEntry { ascii: "quad-origin", glyph: "\u{2395}IO" },
     KeywordEntry { ascii: "quad-seed",   glyph: "\u{2395}RL" },
+    KeywordEntry { ascii: "factorial",   glyph: "!" },
+    KeywordEntry { ascii: "binomial",    glyph: "!" },
     KeywordEntry { ascii: "compress",    glyph: "/" },
     KeywordEntry { ascii: "comment",     glyph: "\u{235D}" }, // ⍝
+    KeywordEntry { ascii: "residue",     glyph: "|" },
+    KeywordEntry { ascii: "signum",      glyph: "\u{00D7}" }, // ×
+    KeywordEntry { ascii: "member",      glyph: "\u{2208}" }, // ∈
     KeywordEntry { ascii: "assign",      glyph: "\u{2190}" }, // ←
     KeywordEntry { ascii: "floor",       glyph: "\u{230A}" }, // ⌊
     KeywordEntry { ascii: "ceil",        glyph: "\u{2308}" }, // ⌈
@@ -86,6 +94,7 @@ const KEYWORD_MAP: &[KeywordEntry] = &[
     KeywordEntry { ascii: "fmt",         glyph: "\u{2355}" }, // ⍕
     KeywordEntry { ascii: "cup",         glyph: "\u{222A}" }, // ∪
     KeywordEntry { ascii: "cap",         glyph: "\u{2229}" }, // ∩
+    KeywordEntry { ascii: "abs",         glyph: "|" },
     KeywordEntry { ascii: "cat",         glyph: "," },
     KeywordEntry { ascii: "and",         glyph: "\u{2227}" }, // ∧
     KeywordEntry { ascii: "not",         glyph: "\u{223C}" }, // ∼
