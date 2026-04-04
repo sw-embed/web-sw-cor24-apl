@@ -209,10 +209,8 @@ impl HelpOverlay {
                         <td>{"indexed assign"}</td></tr>
 
                     <tr class="help-section"><td colspan="2">{"Output"}</td></tr>
-                    <tr><td class="help-key">{"[] assign expr"}</td>
-                        <td>{"print to output (line entry)"}</td></tr>
-                    <tr><td class="help-key">{"qout assign expr"}</td>
-                        <td>{"print to output (in functions)"}</td></tr>
+                    <tr><td class="help-key">{"quad assign expr"}</td>
+                        <td>{"print to output (bare quad I/O)"}</td></tr>
 
                     <tr class="help-section"><td colspan="2">{"System Commands"}</td></tr>
                     <tr><td class="help-key">{")VARS"}</td>
@@ -329,7 +327,7 @@ impl HelpOverlay {
                 { Self::tutorial_section(
                     "8. Bracket Indexing",
                     "Square brackets select or update elements. \
-                     Indices start at 1 (qio defaults to 1).",
+                     Indices start at 1 (quad-origin defaults to 1).",
                     &[
                         ("V assign 10 20 30 40 50", ""),
                         ("V[3]", "30"),
@@ -383,9 +381,9 @@ impl HelpOverlay {
                     "13. Multiline Programs",
                     "Enter lines with [N] prefix. Run with )RUN, review with )LIST.",
                     &[
-                        ("[1]  [] assign 'HELLO'", ""),
-                        ("[2]  [] assign 2 + 2", ""),
-                        (")LIST", "[1] [] assign 'HELLO' / [2] [] assign 2+2"),
+                        ("[1]  quad assign 'HELLO'", ""),
+                        ("[2]  quad assign 2 + 2", ""),
+                        (")LIST", "[1] quad assign 'HELLO' / [2] quad assign 2+2"),
                         (")RUN", "HELLO / 4"),
                     ],
                 )}
@@ -402,11 +400,12 @@ impl HelpOverlay {
                 )}
                 { Self::tutorial_section(
                     "15. Hardware I/O",
-                    "Quad-variables map to COR24 hardware. \
-                     Type qled (\u{2395}LED) for the D2 LED; qsw (\u{2395}SW) for the switch.",
+                    "Hardware access is via shared variables (qsvo). \
+                     AP 242 couples a variable to memory-mapped I/O.",
                     &[
-                        ("qled assign 1", "turn on the D2 LED"),
-                        ("qsw", "read switch (0 or 1)"),
+                        ("'MMIO' qsvo 242", "couple MMIO to AP 242"),
+                        ("MMIO[0]", "read LED register"),
+                        ("MMIO[0] assign 1", "turn on LED"),
                     ],
                 )}
                 { Self::tutorial_section(
@@ -434,31 +433,43 @@ impl HelpOverlay {
                     "Type pick (\u{2283}) to index into nested arrays. \
                      Type roll (?) for random integers. \
                      Type fmt (\u{2355}) to convert numbers to strings. \
-                     Type qout (\u{2395}) for explicit output in functions.",
+                     Type quad (\u{2395}) for explicit output.",
                     &[
                         ("NAMES assign 'hi' 'bye'", ""),
                         ("0 pick NAMES", "hi  (first element)"),
                         ("roll 6", "(random 1\u{2013}6)"),
                         ("roll 4 rho 6", "(4 random 1\u{2013}6)"),
                         ("fmt 42", "'42'  (number \u{2192} string)"),
-                        ("qout assign 'hello'", "hello  (explicit print)"),
+                        ("quad assign 'hello'", "hello  (explicit print)"),
                     ],
                 )}
                 { Self::tutorial_section(
-                    "19. Comments & Delay",
+                    "19. Comments & System Variables",
                     "Type comment (\u{235D}) for line comments (full-line or inline). \
-                     Type qdl (\u{2395}DL) to pause for N milliseconds. \
-                     Type qio (\u{2395}IO) to set index origin (default 1).",
+                     Type quad-origin (\u{2395}IO) to set index origin (default 1). \
+                     Type quad-seed (\u{2395}RL) to set the PRNG seed.",
                     &[
                         ("comment this is a comment", "(ignored)"),
                         ("A assign 5 comment inline", "5"),
-                        ("qdl 100", "(pause 100ms)"),
-                        ("qio assign 0", "(zero-based indexing)"),
+                        ("quad-origin assign 0", "(zero-based indexing)"),
                         ("iota 5", "0 1 2 3 4"),
+                        ("quad-seed assign 42", "(reproducible randoms)"),
                     ],
                 )}
                 { Self::tutorial_section(
-                    "20. Edge Cases & Errors",
+                    "20. Set Operations",
+                    "Type cup (\u{222A}) for unique/union. \
+                     Type cap (\u{2229}) for intersection. \
+                     Works on integers and characters.",
+                    &[
+                        ("cup 1 2 3 2 1 4", "1 2 3 4  (unique)"),
+                        ("1 2 3 cup 3 4 5", "1 2 3 4 5  (union)"),
+                        ("1 2 3 4 cap 2 4 6", "2 4  (intersection)"),
+                        ("cup 'mississippi'", "misp  (unique chars)"),
+                    ],
+                )}
+                { Self::tutorial_section(
+                    "21. Edge Cases & Errors",
                     "APL reports errors clearly. Empty vectors are valid. \
                      Division by zero and domain errors are caught.",
                     &[

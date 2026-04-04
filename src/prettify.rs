@@ -57,22 +57,22 @@ pub const KEYWORDS: &[KeywordEntry] = &[
         literate_dyadic: None,
     },
     KeywordEntry {
-        ascii: "qled",
-        glyph: "\u{2395}LED", // ⎕LED
-        literate_monadic: "LED",
-        literate_dyadic: None,
-    },
-    KeywordEntry {
-        ascii: "qsw",
-        glyph: "\u{2395}SW", // ⎕SW
-        literate_monadic: "switch",
-        literate_dyadic: None,
-    },
-    KeywordEntry {
         ascii: "qsvo",
         glyph: "\u{2395}SVO", // ⎕SVO
         literate_monadic: "share",
         literate_dyadic: Some("share"),
+    },
+    KeywordEntry {
+        ascii: "cup",
+        glyph: "\u{222A}", // ∪
+        literate_monadic: "unique",
+        literate_dyadic: Some("union"),
+    },
+    KeywordEntry {
+        ascii: "cap",
+        glyph: "\u{2229}", // ∩
+        literate_monadic: "intersection",
+        literate_dyadic: Some("intersection"),
     },
     KeywordEntry {
         ascii: "rev",
@@ -152,28 +152,23 @@ pub const KEYWORDS: &[KeywordEntry] = &[
         literate_monadic: "format",
         literate_dyadic: None,
     },
+    // Hyphenated quad-* keywords must precede `quad` for longest-match-first.
     KeywordEntry {
-        ascii: "qout",
-        glyph: "\u{2395}", // ⎕ (quad — assign ← is separate)
-        literate_monadic: "print",
-        literate_dyadic: None,
-    },
-    KeywordEntry {
-        ascii: "qrl",
-        glyph: "\u{2395}RL", // ⎕RL
-        literate_monadic: "random-link",
-        literate_dyadic: None,
-    },
-    KeywordEntry {
-        ascii: "qio",
+        ascii: "quad-origin",
         glyph: "\u{2395}IO", // ⎕IO
         literate_monadic: "index-origin",
         literate_dyadic: None,
     },
     KeywordEntry {
-        ascii: "qdl",
-        glyph: "\u{2395}DL", // ⎕DL
-        literate_monadic: "delay",
+        ascii: "quad-seed",
+        glyph: "\u{2395}RL", // ⎕RL
+        literate_monadic: "random-seed",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "quad",
+        glyph: "\u{2395}", // ⎕ (bare quad I/O)
+        literate_monadic: "print",
         literate_dyadic: None,
     },
     KeywordEntry {
@@ -339,42 +334,32 @@ struct GlyphEntry {
 
 /// Glyph-to-ASCII mapping, longest glyphs first to avoid partial matches.
 const GLYPH_MAP: &[GlyphEntry] = &[
-    // Multi-char quad-variable glyphs (longest first)
+    // Multi-char quad glyphs (longest first)
     GlyphEntry {
         glyph: "\u{2395}SVO",
         ascii: "qsvo",
         pad: true,
     },
     GlyphEntry {
-        glyph: "\u{2395}LED",
-        ascii: "qled",
-        pad: true,
-    },
-    GlyphEntry {
-        glyph: "\u{2395}SW",
-        ascii: "qsw",
-        pad: true,
-    },
-    GlyphEntry {
         glyph: "\u{2395}RL",
-        ascii: "qrl",
+        ascii: "quad-seed",
         pad: true,
-    }, // ⎕RL random link
+    }, // ⎕RL
     GlyphEntry {
         glyph: "\u{2395}IO",
-        ascii: "qio",
+        ascii: "quad-origin",
         pad: true,
-    }, // ⎕IO index origin
-    GlyphEntry {
-        glyph: "\u{2395}DL",
-        ascii: "qdl",
-        pad: true,
-    }, // ⎕DL delay
+    }, // ⎕IO
     GlyphEntry {
         glyph: "\u{2395}\u{2190}",
-        ascii: "qout assign",
+        ascii: "quad assign",
         pad: true,
     }, // ⎕← quad output
+    GlyphEntry {
+        glyph: "\u{2395}",
+        ascii: "quad",
+        pad: true,
+    }, // ⎕ bare quad
     // Single-char APL glyphs → keywords
     GlyphEntry {
         glyph: "\u{2374}",
@@ -452,6 +437,16 @@ const GLYPH_MAP: &[GlyphEntry] = &[
         ascii: "comment",
         pad: true,
     }, // ⍝ comment
+    GlyphEntry {
+        glyph: "\u{222A}",
+        ascii: "cup",
+        pad: true,
+    }, // ∪ unique/union
+    GlyphEntry {
+        glyph: "\u{2229}",
+        ascii: "cap",
+        pad: true,
+    }, // ∩ intersection
     GlyphEntry {
         glyph: "?",
         ascii: "roll",

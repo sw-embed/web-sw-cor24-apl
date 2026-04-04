@@ -24,14 +24,12 @@ struct GlyphEntry {
 }
 
 const GLYPH_MAP: &[GlyphEntry] = &[
-    // Multi-char quad-variable glyphs (longest first)
-    GlyphEntry { glyph: "\u{2395}SVO", ascii: "qsvo", pad: true },
-    GlyphEntry { glyph: "\u{2395}LED", ascii: "qled", pad: true },
-    GlyphEntry { glyph: "\u{2395}SW",  ascii: "qsw",  pad: true },
-    GlyphEntry { glyph: "\u{2395}RL",  ascii: "qrl",  pad: true },
-    GlyphEntry { glyph: "\u{2395}IO",  ascii: "qio",  pad: true },
-    GlyphEntry { glyph: "\u{2395}DL",  ascii: "qdl",  pad: true },
-    GlyphEntry { glyph: "\u{2395}\u{2190}", ascii: "qout assign", pad: true }, // ⎕←
+    // Multi-char quad glyphs (longest first)
+    GlyphEntry { glyph: "\u{2395}SVO", ascii: "qsvo",        pad: true },
+    GlyphEntry { glyph: "\u{2395}RL",  ascii: "quad-seed",   pad: true },  // ⎕RL
+    GlyphEntry { glyph: "\u{2395}IO",  ascii: "quad-origin", pad: true },  // ⎕IO
+    GlyphEntry { glyph: "\u{2395}\u{2190}", ascii: "quad assign", pad: true }, // ⎕←
+    GlyphEntry { glyph: "\u{2395}",    ascii: "quad",        pad: true },  // ⎕ bare quad
     // Single-char APL glyphs → keywords
     GlyphEntry { glyph: "\u{2374}", ascii: "rho",      pad: true },  // ⍴
     GlyphEntry { glyph: "\u{2373}", ascii: "iota",     pad: true },  // ⍳
@@ -49,8 +47,10 @@ const GLYPH_MAP: &[GlyphEntry] = &[
     GlyphEntry { glyph: "\u{2283}", ascii: "pick",     pad: true },  // ⊃
     GlyphEntry { glyph: "\u{2355}", ascii: "fmt",      pad: true },  // ⍕
     GlyphEntry { glyph: "\u{235D}", ascii: "comment",  pad: true },  // ⍝
+    GlyphEntry { glyph: "\u{222A}", ascii: "cup",      pad: true },  // ∪ unique/union
+    GlyphEntry { glyph: "\u{2229}", ascii: "cap",      pad: true },  // ∩ intersection
     GlyphEntry { glyph: "?",        ascii: "roll",     pad: true },  // ?
-    // Non-keyword APL characters → ASCII keywords/operators
+    // Non-keyword APL characters → ASCII operators
     GlyphEntry { glyph: "\u{2190}", ascii: "assign", pad: true },  // ← assignment
     GlyphEntry { glyph: "\u{00D7}", ascii: "*",  pad: false },  // × multiply
     GlyphEntry { glyph: "\u{00F7}", ascii: "/",  pad: false },  // ÷ divide
@@ -65,33 +65,32 @@ struct KeywordEntry {
 }
 
 const KEYWORD_MAP: &[KeywordEntry] = &[
-    // Longest first to avoid partial matches
-    KeywordEntry { ascii: "compress", glyph: "/" },
-    KeywordEntry { ascii: "comment",  glyph: "\u{235D}" }, // ⍝
-    KeywordEntry { ascii: "assign",   glyph: "\u{2190}" }, // ←
-    KeywordEntry { ascii: "floor",    glyph: "\u{230A}" }, // ⌊
-    KeywordEntry { ascii: "ceil",     glyph: "\u{2308}" }, // ⌈
-    KeywordEntry { ascii: "goto",     glyph: "\u{2192}" }, // →
-    KeywordEntry { ascii: "iota",     glyph: "\u{2373}" }, // ⍳
-    KeywordEntry { ascii: "take",     glyph: "\u{2191}" }, // ↑
-    KeywordEntry { ascii: "drop",     glyph: "\u{2193}" }, // ↓
-    KeywordEntry { ascii: "pick",     glyph: "\u{2283}" }, // ⊃
-    KeywordEntry { ascii: "roll",     glyph: "?" },
-    KeywordEntry { ascii: "qsvo",     glyph: "\u{2395}SVO" },
-    KeywordEntry { ascii: "qled",     glyph: "\u{2395}LED" },
-    KeywordEntry { ascii: "qout",     glyph: "\u{2395}" }, // ⎕
-    KeywordEntry { ascii: "qrl",      glyph: "\u{2395}RL" },
-    KeywordEntry { ascii: "qio",      glyph: "\u{2395}IO" },
-    KeywordEntry { ascii: "qdl",      glyph: "\u{2395}DL" },
-    KeywordEntry { ascii: "rho",      glyph: "\u{2374}" }, // ⍴
-    KeywordEntry { ascii: "rev",      glyph: "\u{233D}" }, // ⌽
-    KeywordEntry { ascii: "fmt",      glyph: "\u{2355}" }, // ⍕
-    KeywordEntry { ascii: "cat",      glyph: "," },
-    KeywordEntry { ascii: "and",      glyph: "\u{2227}" }, // ∧
-    KeywordEntry { ascii: "not",      glyph: "\u{223C}" }, // ∼
-    KeywordEntry { ascii: "del",      glyph: "\u{2207}" }, // ∇
-    KeywordEntry { ascii: "qsw",      glyph: "\u{2395}SW" },
-    KeywordEntry { ascii: "or",       glyph: "\u{2228}" }, // ∨
+    // Longest first to avoid partial matches (hyphenated before plain)
+    KeywordEntry { ascii: "quad-origin", glyph: "\u{2395}IO" },
+    KeywordEntry { ascii: "quad-seed",   glyph: "\u{2395}RL" },
+    KeywordEntry { ascii: "compress",    glyph: "/" },
+    KeywordEntry { ascii: "comment",     glyph: "\u{235D}" }, // ⍝
+    KeywordEntry { ascii: "assign",      glyph: "\u{2190}" }, // ←
+    KeywordEntry { ascii: "floor",       glyph: "\u{230A}" }, // ⌊
+    KeywordEntry { ascii: "ceil",        glyph: "\u{2308}" }, // ⌈
+    KeywordEntry { ascii: "goto",        glyph: "\u{2192}" }, // →
+    KeywordEntry { ascii: "iota",        glyph: "\u{2373}" }, // ⍳
+    KeywordEntry { ascii: "take",        glyph: "\u{2191}" }, // ↑
+    KeywordEntry { ascii: "drop",        glyph: "\u{2193}" }, // ↓
+    KeywordEntry { ascii: "pick",        glyph: "\u{2283}" }, // ⊃
+    KeywordEntry { ascii: "roll",        glyph: "?" },
+    KeywordEntry { ascii: "quad",        glyph: "\u{2395}" }, // ⎕
+    KeywordEntry { ascii: "qsvo",        glyph: "\u{2395}SVO" },
+    KeywordEntry { ascii: "rho",         glyph: "\u{2374}" }, // ⍴
+    KeywordEntry { ascii: "rev",         glyph: "\u{233D}" }, // ⌽
+    KeywordEntry { ascii: "fmt",         glyph: "\u{2355}" }, // ⍕
+    KeywordEntry { ascii: "cup",         glyph: "\u{222A}" }, // ∪
+    KeywordEntry { ascii: "cap",         glyph: "\u{2229}" }, // ∩
+    KeywordEntry { ascii: "cat",         glyph: "," },
+    KeywordEntry { ascii: "and",         glyph: "\u{2227}" }, // ∧
+    KeywordEntry { ascii: "not",         glyph: "\u{223C}" }, // ∼
+    KeywordEntry { ascii: "del",         glyph: "\u{2207}" }, // ∇
+    KeywordEntry { ascii: "or",          glyph: "\u{2228}" }, // ∨
 ];
 
 /// No multi-char operator conversions needed — assign is now a keyword.

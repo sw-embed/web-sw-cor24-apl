@@ -64,10 +64,11 @@ rho ''
         source: "\
 comment This is a full-line comment
 A assign 5 comment inline comment after expression
-qout assign A + 3
+quad assign A + 3
 comment Another comment
 B assign 10 20 30
-qout assign +/ B comment sum of vector
+quad assign +/ B comment sum of vector
+comment Final comment at end
 ",
     },
     Demo {
@@ -109,24 +110,31 @@ qout assign +/ B comment sum of vector
         source: "\
 I assign 5
 LOOP:
-[] assign I
+quad assign I
 I assign I - 1
 goto (I)/LOOP
-[] assign 0
+quad assign 0
 ",
     },
     Demo {
-        name: "Delay",
-        description: "Pause execution with qdl (milliseconds)",
+        name: "Cup & Cap",
+        description: "Set operations: unique, union, intersection",
         source: "\
-qout assign 'start'
-qdl 100
-qout assign 'after 100ms'
-qdl 50
-qout assign 'after 50ms'
-N assign 200
-qdl N
-qout assign 'after 200ms'
+comment monadic cup: unique (remove duplicates)
+quad assign cup 1 2 3 2 1 4
+quad assign cup 5 5 5
+comment dyadic cup: union
+quad assign 1 2 3 cup 3 4 5
+quad assign 1 2 cup 1 2
+comment dyadic cap: intersection
+quad assign 1 2 3 4 cap 2 4 6
+quad assign 1 2 3 cap 4 5 6
+comment character unique
+quad assign cup 'mississippi'
+comment character union
+quad assign 'abc' cup 'cde'
+comment character intersection
+quad assign 'abcabc' cap 'bcd'
 ",
     },
     Demo {
@@ -176,22 +184,10 @@ fmt 0
 fmt 1 2 3
 rho fmt 42
 rho fmt 100
+rho fmt _5
+rho fmt 1 2 3
 'ROUND ' cat fmt 5
 'Score: ' cat fmt 123
-",
-    },
-    Demo {
-        name: "Hardware I/O",
-        description: "LED and switch via quad-variables",
-        source: "\
-qled
-qled assign 1
-qled
-qled assign 0
-qled
-qsw
-qled assign qsw
-qled
 ",
     },
     Demo {
@@ -200,92 +196,84 @@ qled
         source: "\
 comment Horse Race -- Full Version
 comment 4 named horses race with track visualization
-qio assign 0
-qrl assign 42
+comment Demonstrates: nested arrays, pick, roll, fmt, cat, rho on chars,
+comment   quad, ceil/, compress, comparisons, or/, and/, goto, labels
+comment
+quad-origin assign 0
+quad-seed assign 42
 NH assign 4
 GOAL assign 15
 POS assign NH rho 0
 RND assign 0
 NAMES assign 'Thndr' 'Lghtn' 'Storm' 'Blaze'
 comment
+comment Display track for each horse
 del R assign TRACK X
 R assign 0
 I assign 0
 SHOW: R assign (I pick NAMES) cat '|' cat (X[I] rho '#')
-qout assign R
+quad assign R
 I assign I + 1
 goto (I < NH)/SHOW
 del
 comment
+comment Main race function
 del R assign RACE X
 R assign 0
 NEXT: RND assign RND + 1
-qout assign '=== Round ' cat fmt RND
+quad assign '=== Round ' cat fmt RND
 POS assign POS + roll NH rho 3
 TRACK POS
 LEAD assign ceil/ POS
-qout assign 'Leader at ' cat fmt LEAD
+quad assign 'Leader at ' cat fmt LEAD
 DONE assign or/ POS >= GOAL
 goto (DONE = 0)/NEXT
 WIN assign (POS >= GOAL) compress iota NH
 NW assign rho WIN
-qout assign 'Race over!'
+quad assign 'Race over!'
 goto (NW > 1)/TIE
-qout assign 'Winner: ' cat ((0 pick WIN) pick NAMES)
+quad assign 'Winner: ' cat ((0 pick WIN) pick NAMES)
 goto 0
-TIE: qout assign (fmt NW) cat '-way tie!'
+TIE: quad assign (fmt NW) cat '-way tie!'
 del
 comment
-qout assign '*** HORSE RACE ***'
+quad assign '*** HORSE RACE ***'
 Z assign RACE 0
 )OFF
 ",
     },
     Demo {
-        name: "Horse Race (Idiomatic)",
-        description: "Compact APL horse race with names and track",
+        name: "Horse Race (Simple)",
+        description: "4 horses race to a finish line",
         source: "\
-qio assign 0
-qrl assign 42
-NAMES assign 'Lucky' 'Thndr' 'Shadw' 'Comet' 'Blaze'
-NH assign 5
+comment Horse Race -- Simple Version
+comment 4 horses race to a finish line
+comment Demonstrates: roll, fmt, cat, quad, comparisons, or/, goto, labels
 comment
-del R assign SHOW X
-R assign 0
-I assign 0
-S: qout assign (I pick NAMES) cat '|' cat ((I pick POS) rho '#')
-I assign I + 1
-goto (I < NH)/S
-del
+quad-origin assign 0
+quad-seed assign 42
+NH assign 4
+GOAL assign 10
+POS assign NH rho 0
+RND assign 0
 comment
 del R assign RACE X
 R assign 0
-POS assign NH rho 0
-qout assign 'THE RACE IS ON!'
-L: POS assign POS + roll NH rho 3
-SHOW 0
-qout assign ''
-goto (0 = or/ POS >= 15)/L
-qout assign 'WINNER: ' cat ((0 pick (POS = ceil/ POS) compress iota NH) pick NAMES)
+NEXT: RND assign RND + 1
+quad assign 'Round ' cat fmt RND
+POS assign POS + roll NH rho 3
+quad assign POS
+DONE assign or/ POS >= GOAL
+goto (DONE = 0)/NEXT
+WIN assign (POS >= GOAL) compress iota NH
+quad assign 'Winner: horse ' cat fmt (1 + 0 pick WIN)
 del
 comment
+quad assign '--- Horse Race ---'
 Z assign RACE 0
+quad assign 'Final positions:'
+quad assign POS
 )OFF
-",
-    },
-    Demo {
-        name: "Index Origin",
-        description: "Switch between 1-based and 0-based indexing with qio",
-        source: "\
-qio
-iota 5
-qio assign 0
-iota 5
-V assign 10 20 30
-V[0]
-qio assign 1
-iota 5
-V[1]
 ",
     },
     Demo {
@@ -305,6 +293,7 @@ iota 10
         description: "Large iota without WS FULL (lazy evaluation)",
         source: "\
 comment Lazy iota: iota N uses only 4 heap words regardless of N
+comment No WS FULL even with huge arguments
 rho iota 999999
 5 take iota 999999
 5 take 5 drop iota 999999
@@ -338,9 +327,9 @@ rho 2 3 take 3 3 rho iota 9
         source: "\
 [1] N assign 0
 [2] LOOP: N assign N + 1
-[3] [] assign N
+[3] quad assign N
 [4] goto (5 - N)/LOOP
-[5] [] assign 99
+[5] quad assign 99
 )LIST
 )RUN
 )ERASE
@@ -364,34 +353,71 @@ rho A
         description: "Logical or/ and and/ reduction",
         source: "\
 comment or/ reduce tests
-or/ 0 0 1 0
-or/ 0 0 0 0
-or/ 1 1 1 1
+quad assign or/ 0 0 1 0
+quad assign or/ 0 0 0 0
+quad assign or/ 1 1 1 1
 comment and/ reduce tests
-and/ 1 1 1 1
-and/ 1 1 0 1
-and/ 0 0 0 0
+quad assign and/ 1 1 1 1
+quad assign and/ 1 1 0 1
+quad assign and/ 0 0 0 0
 comment mixed with expressions
 A assign 0 1 0 1
-or/ A
-and/ A
+quad assign or/ A
+quad assign and/ A
+comment single element
+quad assign or/ 1
+quad assign and/ 0
 ",
     },
     Demo {
-        name: "Quad Output",
-        description: "Explicit printing with qout in functions",
+        name: "Quad I/O",
+        description: "Explicit printing with quad in functions",
         source: "\
-qout assign 42
-qout assign 1 2 3
-qout assign 'hello'
+quad assign 42
+quad assign 1 2 3
+quad assign 'hello'
 A assign 10
-qout assign A + 5
+quad assign A + 5
+quad assign iota 5
+quad assign 99
 del R assign SHOW X
 R assign X
-qout assign 'value:'
-qout assign X
+quad assign 'value:'
+quad assign X
 del
 SHOW 7
+",
+    },
+    Demo {
+        name: "Quad-Origin",
+        description: "Index origin: switch between 1-based and 0-based",
+        source: "\
+comment quad-origin: index origin system variable
+comment default is 1-origin
+quad assign quad-origin
+quad assign iota 5
+comment switch to 0-origin
+quad-origin assign 0
+quad assign quad-origin
+quad assign iota 5
+comment restore 1-origin
+quad-origin assign 1
+quad assign iota 5
+",
+    },
+    Demo {
+        name: "Quad-Seed",
+        description: "PRNG seed for reproducible random sequences",
+        source: "\
+comment quad-seed: PRNG seed system variable
+quad-seed assign 42
+quad assign quad-seed
+quad assign roll 6
+quad assign roll 6
+comment reseed to same value gives same sequence
+quad-seed assign 42
+quad assign roll 6
+quad assign roll 6
 ",
     },
     Demo {
