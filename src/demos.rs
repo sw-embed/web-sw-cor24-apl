@@ -246,6 +246,7 @@ DONE assign or/ POS >= GOAL
 goto (DONE = 0)/NEXT
 WIN assign (POS = LEAD) compress iota NH
 NW assign rho WIN
+quad assign 'Race over!'
 goto (NW > 1)/TIE
 quad assign 'Winner: ' cat ((0 pick WIN) pick NAMES) cat ' at ' cat fmt LEAD
 goto 0
