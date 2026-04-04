@@ -214,32 +214,28 @@ rho fmt 1 2 3
         name: "Horse Race",
         description: "4 named horses race with track visualization",
         source: "\
-comment Horse Race -- Full Version
-comment 4 named horses race with track visualization
-comment Demonstrates: nested arrays, pick, roll, fmt, cat, rho on chars,
-comment   quad, ceil/, compress, comparisons, or/, and/, goto, labels
-comment
+comment Horse Race -- type RACE to run again with new results
 quad-origin assign 0
-quad-seed assign 42
+quad-seed assign 7
 NH assign 4
 GOAL assign 15
 POS assign NH rho 0
 RND assign 0
-NAMES assign 'Thndr' 'Lghtn' 'Storm' 'Blaze'
+NAMES assign 'Thunder' 'Stormy ' 'Blazer ' 'Shadow '
 comment
-comment Display track for each horse
 del R assign TRACK X
 R assign 0
 I assign 0
-SHOW: R assign (I pick NAMES) cat '|' cat (X[I] rho '#')
+SHOW: R assign (I pick NAMES) cat ':' cat (X[I] rho '#')
 quad assign R
 I assign I + 1
 goto (I < NH)/SHOW
 del
 comment
-comment Main race function
 del R assign RACE
 R assign 0
+POS assign NH rho 0
+RND assign 0
 NEXT: RND assign RND + 1
 quad assign '=== Round ' cat fmt RND
 POS assign POS + roll NH rho 3
@@ -259,41 +255,7 @@ del
 comment
 quad assign '*** HORSE RACE ***'
 Z assign RACE
-)OFF
-",
-    },
-    Demo {
-        name: "Horse Race (Simple)",
-        description: "4 horses race to a finish line",
-        source: "\
-comment Horse Race -- Simple Version
-comment 4 horses race to a finish line
-comment Demonstrates: roll, fmt, cat, quad, comparisons, or/, goto, labels
-comment
-quad-origin assign 0
-quad-seed assign 42
-NH assign 4
-GOAL assign 10
-POS assign NH rho 0
-RND assign 0
-comment
-del R assign RACE
-R assign 0
-NEXT: RND assign RND + 1
-quad assign 'Round ' cat fmt RND
-POS assign POS + roll NH rho 3
-quad assign POS
-DONE assign or/ POS >= GOAL
-goto (DONE = 0)/NEXT
-WIN assign (POS >= GOAL) compress iota NH
-quad assign 'Winner: horse ' cat fmt (1 + 0 pick WIN)
-del
-comment
-quad assign '--- Horse Race ---'
-Z assign RACE
-quad assign 'Final positions:'
-quad assign POS
-)OFF
+comment Type RACE to run again (results vary each time)
 ",
     },
     Demo {

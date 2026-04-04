@@ -50,9 +50,7 @@ const GLYPH_MAP: &[GlyphEntry] = &[
     GlyphEntry { glyph: "\u{222A}", ascii: "cup",      pad: true },  // ∪ unique/union
     GlyphEntry { glyph: "\u{2229}", ascii: "cap",      pad: true },  // ∩ intersection
     GlyphEntry { glyph: "\u{2208}", ascii: "member",   pad: true },  // ∈ membership
-    GlyphEntry { glyph: "?",        ascii: "roll",     pad: true },  // ?
-    GlyphEntry { glyph: "!",        ascii: "factorial", pad: true },  // ! factorial/binomial
-    GlyphEntry { glyph: "|",        ascii: "abs",      pad: true },  // | abs/residue
+    // Note: ?, !, | omitted — plain ASCII chars that appear in strings
     // Non-keyword APL characters → ASCII operators
     GlyphEntry { glyph: "\u{2190}", ascii: "assign", pad: true },  // ← assignment
     GlyphEntry { glyph: "\u{00D7}", ascii: "*",  pad: false },  // × multiply

@@ -498,21 +498,9 @@ const GLYPH_MAP: &[GlyphEntry] = &[
         ascii: "member",
         pad: true,
     }, // ∈ membership
-    GlyphEntry {
-        glyph: "?",
-        ascii: "roll",
-        pad: true,
-    }, // ? roll (monadic random)
-    GlyphEntry {
-        glyph: "!",
-        ascii: "factorial",
-        pad: true,
-    }, // ! factorial/binomial
-    GlyphEntry {
-        glyph: "|",
-        ascii: "abs",
-        pad: true,
-    }, // | absolute value/residue
+    // Note: `?`, `!`, `|` are NOT in the glyph map because they are plain
+    // ASCII characters that appear in string literals and regular text.
+    // They only exist as keywords (roll, factorial, abs) in the KEYWORDS table.
     // Non-keyword APL characters → ASCII operators (no padding needed)
     GlyphEntry {
         glyph: "\u{2190}",
