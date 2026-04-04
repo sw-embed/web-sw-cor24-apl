@@ -244,14 +244,12 @@ LEAD assign ceil/ POS
 quad assign 'Leader at ' cat fmt LEAD
 DONE assign or/ POS >= GOAL
 goto (DONE = 0)/NEXT
-BEST assign ceil/ POS
-WIN assign (POS = BEST) compress iota NH
+WIN assign (POS = LEAD) compress iota NH
 NW assign rho WIN
-quad assign 'Race over!'
 goto (NW > 1)/TIE
-quad assign 'Winner: ' cat ((0 pick WIN) pick NAMES) cat ' at ' cat fmt BEST
+quad assign 'Winner: ' cat ((0 pick WIN) pick NAMES) cat ' at ' cat fmt LEAD
 goto 0
-TIE: quad assign (fmt NW) cat '-way tie at ' cat fmt BEST
+TIE: quad assign (fmt NW) cat '-way tie at ' cat fmt LEAD
 del
 comment
 quad assign '*** HORSE RACE ***'
