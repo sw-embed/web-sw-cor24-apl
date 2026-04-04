@@ -223,13 +223,13 @@ POS assign NH rho 0
 RND assign 0
 NAMES assign 'Thunder' 'Stormy ' 'Blazer ' 'Shadow '
 comment
-del R assign TRACK X
+del R assign SHOW X
 R assign 0
 I assign 0
-SHOW: R assign (I pick NAMES) cat ':' cat (X[I] rho '#')
+LP: R assign (I pick NAMES) cat ':' cat (X[I] rho '#')
 quad assign R
 I assign I + 1
-goto (I < NH)/SHOW
+goto (I < NH)/LP
 del
 comment
 del R assign RACE
@@ -239,7 +239,7 @@ RND assign 0
 NEXT: RND assign RND + 1
 quad assign '=== Round ' cat fmt RND
 POS assign POS + roll NH rho 3
-TRACK POS
+SHOW POS
 LEAD assign ceil/ POS
 quad assign 'Leader at ' cat fmt LEAD
 DONE assign or/ POS >= GOAL
