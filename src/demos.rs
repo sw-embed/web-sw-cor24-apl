@@ -265,10 +265,10 @@ comment gradeup and gradedown (sort indices)
 quad assign gradeup 30 10 20
 quad assign gradedown 30 10 20
 quad assign gradeup 5 3 1 4 2
-comment use grade to sort: V[gradeup V]
+comment grade returns indices, not sorted values
 V assign 30 10 50 20 40
-quad assign V[gradeup V]
-quad assign V[gradedown V]
+quad assign gradeup V
+quad assign gradedown V
 ",
     },
     Demo {
