@@ -30,6 +30,7 @@ const GLYPH_MAP: &[GlyphEntry] = &[
     GlyphEntry { glyph: "\u{2395}IO",  ascii: "quad-origin", pad: true },  // ⎕IO
     GlyphEntry { glyph: "\u{2395}\u{2190}", ascii: "quad assign", pad: true }, // ⎕←
     GlyphEntry { glyph: "\u{2395}",    ascii: "quad",        pad: true },  // ⎕ bare quad
+    GlyphEntry { glyph: "\u{2218}.",  ascii: "outer.",     pad: true },  // ∘. outer product
     // Single-char APL glyphs → keywords
     GlyphEntry { glyph: "\u{2374}", ascii: "rho",      pad: true },  // ⍴
     GlyphEntry { glyph: "\u{2373}", ascii: "iota",     pad: true },  // ⍳
@@ -76,6 +77,7 @@ const KEYWORD_MAP: &[KeywordEntry] = &[
     // Longest first to avoid partial matches (hyphenated before plain)
     KeywordEntry { ascii: "quad-origin", glyph: "\u{2395}IO" },
     KeywordEntry { ascii: "quad-seed",   glyph: "\u{2395}RL" },
+    KeywordEntry { ascii: "outer.",      glyph: "\u{2218}." }, // ∘.
     KeywordEntry { ascii: "transpose",   glyph: "\u{2349}" }, // ⍉
     KeywordEntry { ascii: "gradedown",   glyph: "\u{2352}" }, // ⍒
     KeywordEntry { ascii: "factorial",   glyph: "!" },

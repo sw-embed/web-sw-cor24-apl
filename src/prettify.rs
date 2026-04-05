@@ -236,6 +236,12 @@ pub const KEYWORDS: &[KeywordEntry] = &[
         literate_monadic: "power",
         literate_dyadic: Some("power"),
     },
+    KeywordEntry {
+        ascii: "outer.",
+        glyph: "\u{2218}.", // ∘. (jot-dot, outer product prefix)
+        literate_monadic: "outer.",
+        literate_dyadic: Some("outer."),
+    },
     // Hyphenated quad-* keywords must precede `quad` for longest-match-first.
     KeywordEntry {
         ascii: "quad-origin",
@@ -454,6 +460,12 @@ const GLYPH_MAP: &[GlyphEntry] = &[
         ascii: "quad",
         pad: true,
     }, // ⎕ bare quad
+    // Compound operator prefix
+    GlyphEntry {
+        glyph: "\u{2218}.",
+        ascii: "outer.",
+        pad: true,
+    }, // ∘. outer product
     // Single-char APL glyphs → keywords
     GlyphEntry {
         glyph: "\u{2374}",
