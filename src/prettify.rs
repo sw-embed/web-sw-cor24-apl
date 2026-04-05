@@ -78,7 +78,7 @@ pub const KEYWORDS: &[KeywordEntry] = &[
         ascii: "rev",
         glyph: "\u{233D}", // ⌽
         literate_monadic: "reverse",
-        literate_dyadic: None,
+        literate_dyadic: Some("rotate"),
     },
     KeywordEntry {
         ascii: "cat",
@@ -184,9 +184,57 @@ pub const KEYWORDS: &[KeywordEntry] = &[
     },
     KeywordEntry {
         ascii: "member",
-        glyph: "\u{2208}", // ∈
+        glyph: "\u{220A}", // ∊ (small element of)
         literate_monadic: "membership",
         literate_dyadic: Some("membership"),
+    },
+    KeywordEntry {
+        ascii: "without",
+        glyph: "~",
+        literate_monadic: "without",
+        literate_dyadic: Some("without"),
+    },
+    KeywordEntry {
+        ascii: "gradeup",
+        glyph: "\u{234B}", // ⍋
+        literate_monadic: "sort-ascending",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "gradedown",
+        glyph: "\u{2352}", // ⍒
+        literate_monadic: "sort-descending",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "transpose",
+        glyph: "\u{2349}", // ⍉
+        literate_monadic: "transpose",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "encode",
+        glyph: "\u{22A4}", // ⊤
+        literate_monadic: "encode",
+        literate_dyadic: Some("encode"),
+    },
+    KeywordEntry {
+        ascii: "decode",
+        glyph: "\u{22A5}", // ⊥
+        literate_monadic: "decode",
+        literate_dyadic: Some("decode"),
+    },
+    KeywordEntry {
+        ascii: "enclose",
+        glyph: "\u{2282}", // ⊂
+        literate_monadic: "enclose",
+        literate_dyadic: None,
+    },
+    KeywordEntry {
+        ascii: "power",
+        glyph: "\u{22C6}", // ⋆
+        literate_monadic: "power",
+        literate_dyadic: Some("power"),
     },
     // Hyphenated quad-* keywords must precede `quad` for longest-match-first.
     KeywordEntry {
@@ -494,13 +542,46 @@ const GLYPH_MAP: &[GlyphEntry] = &[
         pad: true,
     }, // ∩ intersection
     GlyphEntry {
-        glyph: "\u{2208}",
+        glyph: "\u{220A}",
         ascii: "member",
         pad: true,
-    }, // ∈ membership
-    // Note: `?`, `!`, `|` are NOT in the glyph map because they are plain
-    // ASCII characters that appear in string literals and regular text.
-    // They only exist as keywords (roll, factorial, abs) in the KEYWORDS table.
+    }, // ∊ membership
+    GlyphEntry {
+        glyph: "\u{234B}",
+        ascii: "gradeup",
+        pad: true,
+    }, // ⍋
+    GlyphEntry {
+        glyph: "\u{2352}",
+        ascii: "gradedown",
+        pad: true,
+    }, // ⍒
+    GlyphEntry {
+        glyph: "\u{2349}",
+        ascii: "transpose",
+        pad: true,
+    }, // ⍉
+    GlyphEntry {
+        glyph: "\u{22A4}",
+        ascii: "encode",
+        pad: true,
+    }, // ⊤
+    GlyphEntry {
+        glyph: "\u{22A5}",
+        ascii: "decode",
+        pad: true,
+    }, // ⊥
+    GlyphEntry {
+        glyph: "\u{2282}",
+        ascii: "enclose",
+        pad: true,
+    }, // ⊂
+    GlyphEntry {
+        glyph: "\u{22C6}",
+        ascii: "power",
+        pad: true,
+    }, // ⋆
+    // Note: ?, !, | are NOT in the glyph map — plain ASCII chars in strings.
     // Non-keyword APL characters → ASCII operators (no padding needed)
     GlyphEntry {
         glyph: "\u{2190}",

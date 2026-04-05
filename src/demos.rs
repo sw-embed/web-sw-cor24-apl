@@ -183,6 +183,39 @@ rho 1 1 rho 5
 ",
     },
     Demo {
+        name: "Enclose",
+        description: "Wrap a value in a box (monadic enclose)",
+        source: "\
+comment enclose: wrap value in a box
+quad assign enclose 1 2 3
+quad assign enclose 'hello'
+comment round-trip: 1 pick undoes enclose
+quad assign 1 pick enclose 1 2 3
+quad assign 1 pick enclose 'world'
+comment rho of enclosed is 1
+quad assign rho enclose 1 2 3
+",
+    },
+    Demo {
+        name: "Encode & Decode",
+        description: "Radix conversion: represent and evaluate",
+        source: "\
+comment encode (represent in radix) and decode (evaluate from radix)
+comment binary: 5 in base 2
+quad assign 2 2 2 encode 5
+comment decode back
+quad assign 2 2 2 decode 1 0 1
+comment time: 3661 seconds = 1h 1m 1s
+quad assign 24 60 60 encode 3661
+quad assign 24 60 60 decode 1 1 1
+comment base 10 digits of 123
+quad assign 10 10 10 encode 123
+quad assign 10 10 10 decode 1 2 3
+comment round-trip
+quad assign 2 2 2 2 decode 2 2 2 2 encode 13
+",
+    },
+    Demo {
         name: "Error Handling",
         description: "All six error types, REPL recovers",
         source: "\
@@ -208,6 +241,20 @@ rho fmt _5
 rho fmt 1 2 3
 'ROUND ' cat fmt 5
 'Score: ' cat fmt 123
+",
+    },
+    Demo {
+        name: "Grade Up & Down",
+        description: "Sort indices ascending and descending",
+        source: "\
+comment gradeup and gradedown (sort indices)
+quad assign gradeup 30 10 20
+quad assign gradedown 30 10 20
+quad assign gradeup 5 3 1 4 2
+comment use grade to sort: V[gradeup V]
+V assign 30 10 50 20 40
+quad assign V[gradeup V]
+quad assign V[gradedown V]
 ",
     },
     Demo {
@@ -304,6 +351,21 @@ quad assign 5 member 1 2 3 4 5
 quad assign 5 member 1 2 3
 comment character member
 quad assign 'hello' member 'aeiou'
+",
+    },
+    Demo {
+        name: "Inner Product",
+        description: "Matrix and vector inner products (f.g)",
+        source: "\
+comment inner product: A f.g B
+comment dot product (sum of products)
+quad assign 1 2 3 +.* 4 5 6
+comment matrix multiply
+quad assign (2 2 rho 1 2 3 4) +.* (2 2 rho 5 6 7 8)
+comment matrix-vector multiply
+quad assign (2 3 rho 1 2 3 4 5 6) +.* 1 2 3
+comment boolean: any match (or.=)
+quad assign 1 2 3 4 5 or.= 3 3 3 3 3
 ",
     },
     Demo {
@@ -446,6 +508,35 @@ quad assign and/ 0
 ",
     },
     Demo {
+        name: "Outer Product",
+        description: "Outer product tables (A outer.f B)",
+        source: "\
+comment outer product: A outer.f B
+comment addition table
+quad assign 1 2 3 outer.+ 10 20
+comment multiplication table
+quad assign 1 2 3 4 outer.* 1 2 3 4
+comment identity-like matrix
+quad assign 1 2 3 outer.= 1 2 3
+comment comparison
+quad assign 1 2 3 outer.<= 1 2 3
+",
+    },
+    Demo {
+        name: "Power",
+        description: "Integer exponentiation",
+        source: "\
+comment power: integer exponentiation
+quad assign 2 power 10
+quad assign 3 power 0
+quad assign 5 power 3
+comment scalar extension
+quad assign 2 power 0 1 2 3 4 5 6 7 8
+comment vector power vector
+quad assign 1 2 3 4 5 power 5 4 3 2 1
+",
+    },
+    Demo {
         name: "Quad I/O",
         description: "Explicit printing with quad in functions",
         source: "\
@@ -504,6 +595,21 @@ quad assign roll 6
 5 rho 1 2 3
 2 3 rho 1 2 3 4 5 6
 rho 2 3 rho iota 6
+",
+    },
+    Demo {
+        name: "Rotate",
+        description: "Dyadic rev rotates a vector left by N positions",
+        source: "\
+comment dyadic rev (rotate): N rev V rotates left by N
+quad assign 2 rev 1 2 3 4 5
+quad assign _1 rev 1 2 3 4 5
+quad assign 0 rev 1 2 3 4 5
+quad assign 5 rev 1 2 3 4 5
+comment character rotate
+quad assign 2 rev 'abcde'
+comment monadic rev (reverse) still works
+quad assign rev 1 2 3 4 5
 ",
     },
     Demo {
@@ -600,6 +706,20 @@ _2 drop A
 ",
     },
     Demo {
+        name: "Transpose",
+        description: "Swap rows and columns of a matrix",
+        source: "\
+comment transpose: swap rows and columns of matrix
+quad assign 2 3 rho iota 6
+quad assign transpose 2 3 rho iota 6
+comment 3x2 becomes 2x3
+quad assign rho transpose 2 3 rho iota 6
+comment scalar and vector: no-op
+quad assign transpose 42
+quad assign transpose 1 2 3
+",
+    },
+    Demo {
         name: "User-Defined Functions",
         description: "Define and call functions with del",
         source: "\
@@ -631,6 +751,19 @@ A + B
 2 * 1 2 3
 1 2 3 + 10
 rho 1 2 3 4 5
+",
+    },
+    Demo {
+        name: "Without",
+        description: "Set difference: elements in A not in B",
+        source: "\
+comment without: A without B removes elements of B from A
+quad assign 1 2 3 4 5 without 2 4
+quad assign 1 2 3 4 5 without 6 7
+quad assign 1 2 3 4 5 without 1 2 3 4 5
+comment character without
+quad assign 'hello world' without 'aeiou'
+quad assign 'abcdef' without 'bdf'
 ",
     },
 ];

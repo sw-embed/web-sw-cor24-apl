@@ -49,7 +49,14 @@ const GLYPH_MAP: &[GlyphEntry] = &[
     GlyphEntry { glyph: "\u{235D}", ascii: "comment",  pad: true },  // ⍝
     GlyphEntry { glyph: "\u{222A}", ascii: "cup",      pad: true },  // ∪ unique/union
     GlyphEntry { glyph: "\u{2229}", ascii: "cap",      pad: true },  // ∩ intersection
-    GlyphEntry { glyph: "\u{2208}", ascii: "member",   pad: true },  // ∈ membership
+    GlyphEntry { glyph: "\u{220A}", ascii: "member",   pad: true },  // ∊ membership
+    GlyphEntry { glyph: "\u{234B}", ascii: "gradeup",  pad: true },  // ⍋
+    GlyphEntry { glyph: "\u{2352}", ascii: "gradedown",pad: true },  // ⍒
+    GlyphEntry { glyph: "\u{2349}", ascii: "transpose",pad: true },  // ⍉
+    GlyphEntry { glyph: "\u{22A4}", ascii: "encode",   pad: true },  // ⊤
+    GlyphEntry { glyph: "\u{22A5}", ascii: "decode",   pad: true },  // ⊥
+    GlyphEntry { glyph: "\u{2282}", ascii: "enclose",  pad: true },  // ⊂
+    GlyphEntry { glyph: "\u{22C6}", ascii: "power",    pad: true },  // ⋆
     // Note: ?, !, | omitted — plain ASCII chars that appear in strings
     // Non-keyword APL characters → ASCII operators
     GlyphEntry { glyph: "\u{2190}", ascii: "assign", pad: true },  // ← assignment
@@ -69,13 +76,21 @@ const KEYWORD_MAP: &[KeywordEntry] = &[
     // Longest first to avoid partial matches (hyphenated before plain)
     KeywordEntry { ascii: "quad-origin", glyph: "\u{2395}IO" },
     KeywordEntry { ascii: "quad-seed",   glyph: "\u{2395}RL" },
+    KeywordEntry { ascii: "transpose",   glyph: "\u{2349}" }, // ⍉
+    KeywordEntry { ascii: "gradedown",   glyph: "\u{2352}" }, // ⍒
     KeywordEntry { ascii: "factorial",   glyph: "!" },
     KeywordEntry { ascii: "binomial",    glyph: "!" },
     KeywordEntry { ascii: "compress",    glyph: "/" },
     KeywordEntry { ascii: "comment",     glyph: "\u{235D}" }, // ⍝
+    KeywordEntry { ascii: "without",     glyph: "~" },
+    KeywordEntry { ascii: "gradeup",     glyph: "\u{234B}" }, // ⍋
+    KeywordEntry { ascii: "enclose",     glyph: "\u{2282}" }, // ⊂
     KeywordEntry { ascii: "residue",     glyph: "|" },
     KeywordEntry { ascii: "signum",      glyph: "\u{00D7}" }, // ×
-    KeywordEntry { ascii: "member",      glyph: "\u{2208}" }, // ∈
+    KeywordEntry { ascii: "encode",      glyph: "\u{22A4}" }, // ⊤
+    KeywordEntry { ascii: "decode",      glyph: "\u{22A5}" }, // ⊥
+    KeywordEntry { ascii: "member",      glyph: "\u{220A}" }, // ∊
+    KeywordEntry { ascii: "power",       glyph: "\u{22C6}" }, // ⋆
     KeywordEntry { ascii: "assign",      glyph: "\u{2190}" }, // ←
     KeywordEntry { ascii: "floor",       glyph: "\u{230A}" }, // ⌊
     KeywordEntry { ascii: "ceil",        glyph: "\u{2308}" }, // ⌈
