@@ -431,14 +431,23 @@ quad assign MULTI 3
     },
     Demo {
         name: "Matrix Take & Drop",
-        description: "Take and drop rows/columns from matrices",
+        description: "Multi-axis take and drop on matrices",
         source: "\
-1 3 take 3 3 rho iota 9
-_1 3 take 3 3 rho iota 9
-1 3 drop 3 3 rho iota 9
-_1 3 drop 3 3 rho iota 9
-2 3 take 3 3 rho iota 9
-rho 2 3 take 3 3 rho iota 9
+comment Multi-axis take and drop on matrices
+M assign 3 3 rho iota 9
+quad assign M
+comment 2 3 take: first 2 rows, all 3 cols
+quad assign 2 3 take M
+comment 1 2 take: first row, first 2 cols
+quad assign 1 2 take M
+comment negative: last 2 rows, last 2 cols
+quad assign _2 _2 take M
+comment drop: remove first row and first col
+quad assign 1 1 drop M
+comment drop negative: remove last row, last 2 cols
+quad assign _1 _2 drop M
+comment scalar take on matrix still works (rows only)
+quad assign 2 take M
 ",
     },
     Demo {
