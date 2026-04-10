@@ -7,6 +7,8 @@ CPU via WebAssembly.
 
 **Live demo:** <https://sw-embed.github.io/web-sw-cor24-apl/>
 
+Part of the [Software Wrighter COR24 Tools Project](https://sw-embed.github.io/web-sw-cor24-demos/#/).
+
 ## Features
 
 - **REPL panel** -- printer-style terminal with 6-space APL indent,
