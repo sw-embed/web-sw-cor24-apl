@@ -22,6 +22,33 @@ All COR24 repos live under `~/github/sw-embed/` as siblings:
 - `sw-cor24-pcode` -- P-code VM, assembler, and linker
 - `sw-cor24-rust` -- Rust-to-COR24 pipeline
 
+## Branching Strategy
+
+Coordinator-relayed model. **You never push** — the coordinator (mike)
+relays `pr/*` branches into `dev` and pushes.
+
+| Branch        | Owner       | Purpose                                      |
+|---------------|-------------|----------------------------------------------|
+| `main`        | coordinator | Release branch (tagged)                      |
+| `dev`         | coordinator | Integration branch (accumulates merges)      |
+| `feat/<slug>` | you (local) | Work in progress                             |
+| `fix/<slug>`  | you (local) | Bug-fix flavor of `feat/`                    |
+| `pr/<slug>`   | you (local) | Signal "ready to merge" (rename `feat/` → `pr/`) |
+
+**Rules:**
+- Base new branches on `origin/dev` (not `origin/main`).
+- No history rewrites on `dev` or `main`. Rebase is OK on your own `feat/*`.
+- The ref name is the contract — no PR API, no JSON, no ticketing.
+
+**Helpers** (in `$SCRIPTROOT`, on PATH):
+- `dg-new-feature <slug>` — create `feat/<slug>` from `origin/dev`
+- `dg-new-fix <slug>` — create `fix/<slug>`
+- `dg-mark-pr` — rename current `feat/` → `pr/`
+- `dg-list-pr` — list pending `pr/*` branches
+- `dg-policy` / `dg-env` — show policy / env
+
+Full policy: `/disk1/github/softwarewrighter/devgroup/docs/branching-pr-strategy.md`
+
 ## CRITICAL: AgentRail Session Protocol (MUST follow exactly)
 
 ### 1. START (do this FIRST, before anything else)
