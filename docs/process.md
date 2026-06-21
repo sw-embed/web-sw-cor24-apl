@@ -60,6 +60,7 @@ URL: https://sw-embed.github.io/web-sw-cor24-apl/
 
 Path dependencies to sibling repos under `~/github/sw-embed/`:
 
-- `cor24-emulator` -- COR24 assembler and emulator
+- `cor24-emulator` -- COR24 emulator (runtime)
+- `cor24-assembler` (in `sw-cor24-x-assembler`) -- COR24 assembler, build-time only
 - `cor24-isa` -- instruction set architecture definitions
 - `sw-cor24-apl` -- APL interpreter (C source, assembled at build time)

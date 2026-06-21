@@ -129,7 +129,7 @@ Phase 6 (display modes) --- complete
 ```
 sw-cor24-apl (C source)
   -> tc24r (C compiler) -> COR24 assembly
-  -> cor24-assembler (in cor24-emulator) -> machine code
+  -> cor24-assembler (in sw-cor24-x-assembler) -> machine code
   -> embed in build.rs as static bytes
   -> loaded into EmulatorCore at runtime
 ```

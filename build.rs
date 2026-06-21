@@ -4,7 +4,7 @@ fn main() {
     // Pre-assemble the APL interpreter (COR24 assembly → machine code) at build time.
     let apl_source = std::fs::read_to_string("../sw-cor24-apl/build/apl.s")
         .expect("../sw-cor24-apl/build/apl.s");
-    let mut asm = cor24_emulator::Assembler::new();
+    let mut asm = cor24_assembler::Assembler::new();
     let result = asm.assemble(&apl_source);
     if !result.errors.is_empty() {
         for e in &result.errors {
