@@ -167,8 +167,9 @@ editor (display rho as the APL symbol but store canonical ASCII).
 All COR24 repos live under `~/github/sw-embed/` as siblings:
 
 - `sw-cor24-apl` -- APL interpreter (C, targeting COR24)
-- `sw-cor24-emulator` -- COR24 assembler and emulator (Rust)
-- `sw-cor24-assembler` -- COR24 assembler library
+- `sw-cor24-emulator` -- COR24 emulator (Rust)
+- `sw-cor24-x-assembler` -- COR24 assembler library (crate `cor24-assembler`; build-time dep)
+- `sw-cor24-assembler` -- COR24 assembler library (legacy)
 - `web-sw-cor24-pcode` -- P-code VM debugger (browser, closest reference)
 - `web-sw-cor24-assembler` -- COR24 assembly IDE (browser)
 - `sw-cor24-pcode` -- P-code VM, assembler, and linker
@@ -270,7 +271,8 @@ cargo fmt --all                # Format
 - **Trunk** builds the WASM binary and serves it
 - **Yew 0.21** CSR framework for the UI (Component trait, Msg enum, html! macro)
 - **wasm-bindgen** + **web-sys** for browser APIs
-- **cor24-emulator** provides `EmulatorCore` + `Assembler` (path dep to `../sw-cor24-emulator`)
+- **cor24-emulator** provides `EmulatorCore` (path dep to `../sw-cor24-emulator`)
+- **cor24-assembler** provides the build-time `Assembler` used by `build.rs` (path dep to `../sw-cor24-x-assembler`)
 - **sw-cor24-apl** provides the APL interpreter (path dep to `../sw-cor24-apl`)
 - **Catppuccin Mocha** dark theme
 - **pages/** directory for GitHub Pages deployment

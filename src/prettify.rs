@@ -383,7 +383,7 @@ fn literate_entries() -> Vec<LiterateEntry> {
         }
     }
     // Sort longest-first to avoid partial matches.
-    entries.sort_by(|a, b| b.literate.len().cmp(&a.literate.len()));
+    entries.sort_by_key(|b| std::cmp::Reverse(b.literate.len()));
     entries
 }
 
